@@ -8,5 +8,5 @@ app = Flask(__name__)
 def main():
     return render_template('quotefaultmainpage.html')
     if request.method == 'GET':
-        quoteComplete = "\"" + request.form.quoteString + "\" - " + request.form.nameString
+        quoteComplete = "\"" + request.form['quoteString'] + "\" - " + request.form['nameString']
         quoteTime = datetime.now()
