@@ -1,0 +1,17 @@
+alembic
+click
+Flask
+Flask-Migrate
+Flask-Script
+Flask-SQLAlchemy
+itsdangerous
+Jinja2
+Mako
+MarkupSafe
+pip
+PyMySQL
+python-editor
+setuptools
+SQLAlchemy
+Werkzeug
+wheel
