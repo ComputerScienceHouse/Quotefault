@@ -6,3 +6,6 @@ Allow users to access the QuoteFault Main page and submit a quote and name to th
 
 Long-term goals:
 Allow InfoSys to access the database and take one quote a day and display it in the user-center once per hour; Allow Segfault editors to delete old/used quotes from the database at any time; Appearance improvements
+
+(2/12/17):
+Submission now updates a MySQL server hosted by CSH, grabbing csh username, quote and name form strings, and datetime as it goes.  Second /get page is coded to retrieve rows from the MySQL server, and will eventually display them for general user consumption (upon discussion with members of floor, I think I'll have this page be open to everyone in a non-editable state, and just use the CSH MySQL viewer to allow Quotefault editors to remove quotes from the db).  Next step is to learn the nencesary Jinja to implement this properly, and create a button that'll redirect to it from the main page.
