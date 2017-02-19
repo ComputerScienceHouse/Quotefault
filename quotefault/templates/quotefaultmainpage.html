@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Quotefault Main</title>
+    <link type="text/css" rel="stylesheet" href="../static/css/cshbootstrap.css" />
+    <link type="text/css" rel="stylesheet" href="../static/css/quotefaultcss.css" />
+</head>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<body>
+
+<div class="contentContainer">
+    <h1>
+        Quotefault!
+    </h1>
+
+    <h5>
+        <a href="/storage">Quote Storage</a>
+    </h5>
+
+    <form action="/submit" method="POST">
+        <input type="text"
+                name="quoteString"
+                placeholder="Quote">
+        <input type="text"
+                name="nameString"
+                placeholder="Said by...">
+        <br>
+        <input type="submit"
+                value="Submit">
+    </form>
+</div>
+
+</body>
+</html>

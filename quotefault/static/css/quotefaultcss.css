@@ -1,0 +1,33 @@
+body{
+	text-align: center;
+	background-image: url("../images/CSHflag.png");
+	background-size: cover;
+	background-repeat: no-repeat;
+	line-height: 200%;
+	padding: 0px;
+	margin: 0px;
+	}
+.contentContainer{
+    background-color: grey;
+    width: 600px;
+    border: solid 3px black;
+    color: #0F0F0F;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+.contentContainer ul{
+    padding: 10px;
+}
+.contentContainer h1{
+    color: #000000;
+}
+.contentContainer a{
+    color: #0F0F0F;
+    text-decoration: underline;
+}
+.contentContainer a:hover{
+    color: #d1d6d6;
+}
