@@ -9,3 +9,6 @@ Allow InfoSys to access the database and take one quote a day and display it in 
 
 (2/12/17):
 Submission now updates a MySQL server hosted by CSH, grabbing csh username, quote and name form strings, and datetime as it goes.  Second /get page is coded to retrieve rows from the MySQL server, and will eventually display them for general user consumption (upon discussion with members of floor, I think I'll have this page be open to everyone in a non-editable state, and just use the CSH MySQL viewer to allow Quotefault editors to remove quotes from the db).  Next step is to learn the nencesary Jinja to implement this properly, and create a button that'll redirect to it from the main page.
+
+Opcommathon (2/19/17):
+Site functions locally.  Submission now catches repeat quotes before throwing a 500 error.  CSS updated to make both templates more visually appealing, a blend of CSH bootstrap and personal work.  Links inserted to both templates so users can easily jump between the two pages.
