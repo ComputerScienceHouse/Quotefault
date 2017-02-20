@@ -2,8 +2,10 @@ alembic
 click
 Flask
 Flask-Migrate
+Flask-pyoidc
 Flask-Script
 Flask-SQLAlchemy
+gunicorn
 itsdangerous
 Jinja2
 Mako
@@ -15,3 +17,4 @@ setuptools
 SQLAlchemy
 Werkzeug
 wheel
+

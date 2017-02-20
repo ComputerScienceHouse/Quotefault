@@ -3,6 +3,7 @@ from flask import Flask, url_for, render_template, request, flash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 import os
+import requests
 app = Flask(__name__)
 #look for a config file to associate with a db/port/ip/servername
 if os.path.exists(os.path.join(os.getcwd(), "config.py")):
@@ -10,6 +11,16 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
 else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 db = SQLAlchemy(app)
+
+# Disable SSL certificate verification warning
+requests.packages.urllib3.disable_warnings()
+
+# Disable SQLAlchemy modification tracking
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+auth = OIDCAuthentication(app,
+                          issuer=app.config['OIDC_ISSUER'],
+                          client_registration_info=app.config['OIDC_CLIENT_CONFIG'])
+
 app.secret_key = 'submission' #allows message flashing, var not actually used
 
 #create the quote table with all relevant columns
@@ -29,12 +40,14 @@ class Quote(db.Model):
 
 #run the main page by creating the table(s) in the CSH serverspace and rendering the mainpage template
 @app.route('/', methods=['GET'])
+@auth.oidc_auth
 def main():
     db.create_all()
     return render_template('quotefaultmainpage.html')
 
 #run when the form submission button is clicked
 @app.route('/submit', methods=['POST'])
+@auth.oidc_auth
 def submit():
     if request.method == 'POST':
         submitter = request.headers.get("x-webauth-user") #submitter will grab UN from webauth when linked to it
@@ -59,6 +72,7 @@ def submit():
 
 #display stored quotes
 @app.route('/storage', methods=['GET'])
+@auth.oidc_auth
 def get():
     quotes = Quote.query.all() #collect all quote rows in the Quote db
     #create a list to display on the templete using a formatted version of each row as individual items
