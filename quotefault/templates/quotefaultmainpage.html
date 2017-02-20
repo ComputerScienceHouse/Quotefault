@@ -4,9 +4,10 @@
 <head>
     <title>Quotefault Main</title>
     <link type="text/css" rel="stylesheet" href="../static/css/cshbootstrap.css" />
+    <!-- overwrites some of cshcss with personal css file -->
     <link type="text/css" rel="stylesheet" href="../static/css/quotefaultcss.css" />
 </head>
-
+<!-- flash relevant message when submit button is clicked -->
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     {% for message in messages %}
@@ -25,7 +26,7 @@
     <h5>
         <a href="/storage">Quote Storage</a>
     </h5>
-
+    <!-- collect submission info when form submit button clicked -->
     <form action="/submit" method="POST">
         <input type="text"
                 name="quoteString"

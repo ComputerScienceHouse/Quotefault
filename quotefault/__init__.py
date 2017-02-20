@@ -2,10 +2,15 @@
 from flask import Flask, url_for, render_template, request, flash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+import os
 app = Flask(__name__)
-app.config.from_pyfile('config.py') #associate the app with the right server/database
+#look for a config file to associate with a db/port/ip/servername
+if os.path.exists(os.path.join(os.getcwd(), "config.py")):
+    app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
+else:
+    app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 db = SQLAlchemy(app)
-app.secret_key = 'submission'
+app.secret_key = 'submission' #allows message flashing, var not actually used
 
 #create the quote table with all relevant columns
 class Quote(db.Model):
@@ -32,11 +37,11 @@ def main():
 @app.route('/submit', methods=['POST'])
 def submit():
     if request.method == 'POST':
-        print 'hey there'
         submitter = request.headers.get("x-webauth-user") #submitter will grab UN from webauth when linked to it
         quote = request.form['quoteString']
         speaker = request.form['nameString']
-        quoteCheck = Quote.query.filter(Quote.quote == quote).first()  # collect all quote rows in the Quote db
+        # check for quote duplicate
+        quoteCheck = Quote.query.filter(Quote.quote == quote).first()
         if quoteCheck is None:
             # create a row for the Quote table
             new_quote = Quote(submitter=submitter, quote=quote, speaker=speaker)
@@ -56,7 +61,7 @@ def submit():
 @app.route('/storage', methods=['GET'])
 def get():
     quotes = Quote.query.all() #collect all quote rows in the Quote db
-
+    #create a list to display on the templete using a formatted version of each row as individual items
     quote_lst = []
     for quote_obj in quotes:
         quote_lst.append(str(quote_obj.id) + " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(quote_obj.quoteTime))

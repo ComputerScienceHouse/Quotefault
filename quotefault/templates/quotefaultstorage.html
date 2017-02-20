@@ -4,6 +4,7 @@
 <head>
     <title>Quotefault Storage</title>
     <link type="text/css" rel="stylesheet" href="../static/css/cshbootstrap.css" />
+    <!-- overwrites some of cshcss with personal css file -->
     <link type="text/css" rel="stylesheet" href="../static/css/quotefaultcss.css" />
 </head>
 
@@ -16,7 +17,7 @@
     <h5>
         <a href="/">Main</a>
     </h5>
-
+    <!-- display stored quote from the Quotefault db -->
     <ul style="list-style: none">
         {% for quote in quotes %}
             <li>{{ quote }}</li>
