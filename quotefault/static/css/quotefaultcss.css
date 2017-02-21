@@ -20,9 +20,10 @@ body{
     margin-top: 10px;
     padding-bottom: 10px;
 }
-/* fixes odd issue where regular padding was pushing the list to the left */
+/* fixes odd issue where regular padding was pushing the list to the left, also break long words */
 .contentContainer ul{
     padding: 10px;
+    word-wrap: break-word;
 }
 .contentContainer h1{
     color: #000000;
