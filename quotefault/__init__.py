@@ -1,5 +1,5 @@
 #import all relevant packages
-from flask import Flask, url_for, render_template, request, flash
+from flask import Flask, url_for, render_template, request, flash, session
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
@@ -51,7 +51,7 @@ def main():
 @auth.oidc_auth
 def submit():
     if request.method == 'POST':
-        submitter = request.headers.get("x-webauth-user") #submitter will grab UN from webauth when linked to it
+        submitter = session['userinfo'].get('preferred_username', '') #submitter will grab UN from OIDC when linked to it
         quote = request.form['quoteString']
         speaker = request.form['nameString']
         # check for quote duplicate
