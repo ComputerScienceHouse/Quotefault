@@ -54,9 +54,12 @@ def submit():
         submitter = session['userinfo'].get('preferred_username', '') #submitter will grab UN from OIDC when linked to it
         quote = request.form['quoteString']
         speaker = request.form['nameString']
-        # check for quote duplicate
-        quoteCheck = Quote.query.filter(Quote.quote == quote).first()
-        if quoteCheck is None:
+        quoteCheck = Quote.query.filter(Quote.quote == quote).first() #check for quote duplicate
+        #checks for empty quote or submitter
+        if quote == '' or speaker == '':
+            flash('Empty quote or speaker field, try again!')
+            return render_template('quotefaultmainpage.html'), 200
+        elif quoteCheck is None: #no duplicate quotes, proceed with submission
             # create a row for the Quote table
             new_quote = Quote(submitter=submitter, quote=quote, speaker=speaker)
             db.session.add(new_quote)
@@ -67,10 +70,7 @@ def submit():
             flash('Submission Successful!')
             # return something to complete submission
             return render_template('quotefaultmainpage.html'), 200
-        elif quote == '' or speaker == '':
-            flash('Empty quote or speaker field, try again!')
-            return render_template('quotefaultmainpage.html'), 200
-        else:
+        else: #duplicate quote found, bounce the user back to square one
             flash('Quote already submitted!')
             return render_template('quotefaultmainpage.html'), 200
 
