@@ -67,7 +67,7 @@ def submit():
             flash('Submission Successful!')
             # return something to complete submission
             return render_template('quotefaultmainpage.html'), 200
-        elif quote == '' || speaker == '':
+        elif quote == '' or speaker == '':
             flash('Empty quote or speaker field, try again!')
             return render_template('quotefaultmainpage.html'), 200
         else:
