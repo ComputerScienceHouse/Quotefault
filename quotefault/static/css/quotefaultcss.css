@@ -11,7 +11,7 @@ body{
 /* wraps content on page */
 .contentContainer{
     background-color: grey;
-    width: 600px;
+    width: 1000px;
     border: solid 3px black;
     color: #0F0F0F;
     border-radius: 20px;

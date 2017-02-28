@@ -82,5 +82,5 @@ def get():
     #create a list to display on the templete using a formatted version of each row as individual items
     quote_lst = []
     for quote_obj in quotes:
-        quote_lst.append(str(quote_obj.id) + " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(quote_obj.quoteTime))
+        quote_lst.append(" \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(quote_obj.quoteTime))
     return render_template('quotefaultstorage.html', quotes=quote_lst)
