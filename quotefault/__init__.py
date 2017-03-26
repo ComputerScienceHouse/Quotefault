@@ -57,7 +57,7 @@ def submit():
         quoteCheck = Quote.query.filter(Quote.quote == quote).first() #check for quote duplicate
         #checks for empty quote or submitter
         if quote == '' or speaker == '':
-            flash('Empty quote or speaker field, try again!')
+            flash('Empty quote or speaker field, try again!', 'error')
             return render_template('quotefaultmainpage.html'), 200
         elif quoteCheck is None: #no duplicate quotes, proceed with submission
             # create a row for the Quote table
@@ -71,7 +71,7 @@ def submit():
             # return something to complete submission
             return render_template('quotefaultmainpage.html'), 200
         else: #duplicate quote found, bounce the user back to square one
-            flash('Quote already submitted!')
+            flash('Quote already submitted!', 'warning')
             return render_template('quotefaultmainpage.html'), 200
 
 #display stored quotes
@@ -81,6 +81,6 @@ def get():
     quotes = Quote.query.all() #collect all quote rows in the Quote db
     #create a list to display on the templete using a formatted version of each row as individual items
     quote_lst = []
-    for quote_obj in quotes:
+    for quote_obj in reversed(quotes):
         quote_lst.append(" \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(quote_obj.quoteTime))
     return render_template('quotefaultstorage.html', quotes=quote_lst)

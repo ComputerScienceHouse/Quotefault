@@ -10,9 +10,11 @@
 <!-- flash relevant message when submit button is clicked -->
 {% with messages = get_flashed_messages() %}
   {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
+    <ul class=flashes>
+        {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
   {% endif %}
 {% endwith %}
 
