@@ -36,17 +36,3 @@ body{
 .contentContainer a:hover{
     color: #d1d6d6;
 }
-/* Custom message flashing properties */
-.flashes{
-    list-style-type: none;
-    height: 20px;
-    background-color: green;
-}
-
-.flashes .error{
-    background-color: red;
-}
-
-.flashes .warning{
-    background-color: yellow;
-}
