@@ -81,7 +81,7 @@ def get():
     quotes = Quote.query.all() #collect all quote rows in the Quote db
     #create a list to display on the templete using a formatted version of each row as individual items
     quote_lst_new = []
-    quote_lst_old = []
+    quote_lst_old = [] #for quotes older than a month, reduces clutter by hiding these behind a collapsable section
     for quote_obj in reversed(quotes):
         if quote_obj.quoteTime < datetime.now() - timedelta(days= 30):
             quote_lst_old.append(

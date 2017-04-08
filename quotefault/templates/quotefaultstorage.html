@@ -17,18 +17,20 @@
     <h5>
         <a href="/">Main</a>
     </h5>
-    <!-- display stored quote from the Quotefault db -->
+    <!-- display stored quotes from the Quotefault db -->
     <ul style="list-style: none">
         {% for quote in newQuotes %}
             <li>{{ quote }}</li>
         {% endfor %}
-        <a href="#moreQuotes" data-toggle="collapse">But wait, there's more!</a>
-        <div id="moreQuotes" class="collapse">
+    </ul>
+    <a href="#moreQuotes" data-toggle="collapse">But wait, there's more!</a>
+    <div id="moreQuotes" class="collapse">
+        <ul style="...">
             {% for quote in oldQuotes %}
                 <li>{{ quote }}</li>
             {% endfor %}
-        </div>
-    </ul>
+        </ul>
+    </div>
 </div>
 </body>
 </html>
