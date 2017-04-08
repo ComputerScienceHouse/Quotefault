@@ -19,9 +19,15 @@
     </h5>
     <!-- display stored quote from the Quotefault db -->
     <ul style="list-style: none">
-        {% for quote in quotes %}
+        {% for quote in newQuotes %}
             <li>{{ quote }}</li>
         {% endfor %}
+        <a href="#moreQuotes" data-toggle="collapse">But wait, there's more!</a>
+        <div id="moreQuotes" class="collapse">
+            {% for quote in oldQuotes %}
+                <li>{{ quote }}</li>
+            {% endfor %}
+        </div>
     </ul>
 </div>
 </body>

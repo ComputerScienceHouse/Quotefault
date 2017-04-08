@@ -1,6 +1,6 @@
 #import all relevant packages
 from flask import Flask, url_for, render_template, request, flash, session
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 import os
@@ -80,7 +80,15 @@ def submit():
 def get():
     quotes = Quote.query.all() #collect all quote rows in the Quote db
     #create a list to display on the templete using a formatted version of each row as individual items
-    quote_lst = []
+    quote_lst_new = []
+    quote_lst_old = []
     for quote_obj in reversed(quotes):
-        quote_lst.append(" \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(quote_obj.quoteTime))
-    return render_template('quotefaultstorage.html', quotes=quote_lst)
+        if quote_obj.quoteTime < datetime.now() - timedelta(days= 30):
+            quote_lst_old.append(
+                " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
+                    quote_obj.quoteTime))
+        else:
+            quote_lst_new.append(
+                " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
+                    quote_obj.quoteTime))
+    return render_template('quotefaultstorage.html', newQuotes=quote_lst_new, oldQuotes=quote_lst_old)
