@@ -83,11 +83,13 @@ def get():
     #create a list to display on the templete using a formatted version of each row as individual items
     quote_lst_new = []
     quote_lst_old = [] #for quotes older than a month, reduces clutter by hiding these behind a collapsable section
+    quoteCount = 0
     for quote_obj in reversed(quotes):
-        for x in range(0, 30):
+        while(quoteCount < 30):
             quote_lst_new.append(
                 " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
                     quote_obj.quoteTime))
+            quoteCount += 1
         quote_lst_old.append(
             " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
                 quote_obj.quoteTime))
