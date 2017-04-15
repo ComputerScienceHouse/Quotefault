@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 import os
 import requests
+
 app = Flask(__name__)
 #look for a config file to associate with a db/port/ip/servername
 if os.path.exists(os.path.join(os.getcwd(), "config.py")):
@@ -83,12 +84,11 @@ def get():
     quote_lst_new = []
     quote_lst_old = [] #for quotes older than a month, reduces clutter by hiding these behind a collapsable section
     for quote_obj in reversed(quotes):
-        if quote_obj.quoteTime < datetime.now() - timedelta(days= 30):
-            quote_lst_old.append(
-                " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
-                    quote_obj.quoteTime))
-        else:
+        for x in range(0, 30):
             quote_lst_new.append(
                 " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
                     quote_obj.quoteTime))
+        quote_lst_old.append(
+            " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
+                quote_obj.quoteTime))
     return render_template('quotefaultstorage.html', newQuotes=quote_lst_new, oldQuotes=quote_lst_old)

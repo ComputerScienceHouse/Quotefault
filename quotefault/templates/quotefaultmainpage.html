@@ -13,7 +13,7 @@
 <!-- flash relevant message when submit button is clicked -->
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <ul class=alert>
+    <ul class=alert, style="list-style: none">
         {% for category, message in messages %}
             <script>
                 switch(category){
