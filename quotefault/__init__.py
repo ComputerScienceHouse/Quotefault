@@ -85,7 +85,7 @@ def get():
     quote_lst_old = [] #for quotes older than a month, reduces clutter by hiding these behind a collapsable section
     quoteCount = 0
     for quote_obj in reversed(quotes):
-        while(quoteCount < 30):
+        if(quoteCount < 30):
             quote_lst_new.append(
                 " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
                     quote_obj.quoteTime))
