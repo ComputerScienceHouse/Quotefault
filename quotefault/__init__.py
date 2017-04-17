@@ -90,7 +90,8 @@ def get():
                 " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
                     quote_obj.quoteTime))
             quoteCount += 1
-        quote_lst_old.append(
-            " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
-                quote_obj.quoteTime))
+        else:
+            quote_lst_old.append(
+                " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
+                    quote_obj.quoteTime))
     return render_template('quotefaultstorage.html', newQuotes=quote_lst_new, oldQuotes=quote_lst_old)
