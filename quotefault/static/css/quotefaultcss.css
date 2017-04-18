@@ -10,7 +10,7 @@ body{
 }
 /* wraps content on page */
 .contentContainer{
-    background-color: grey;
+    background-color: #D6CDF3;
     max-width: 1000px;
     width: 60%;
     border: solid 3px black;
