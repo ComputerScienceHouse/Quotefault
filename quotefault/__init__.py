@@ -2,6 +2,7 @@
 from flask import Flask, url_for, render_template, request, flash, session
 from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 import os
 import requests
@@ -13,7 +14,7 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
 else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 db = SQLAlchemy(app)
-
+migrate = Migrate(app, db)
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
 
