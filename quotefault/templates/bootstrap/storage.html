@@ -2,7 +2,7 @@
 {% block body %}
     <div class="container">
         {% for quote in newQuotes %}
-            {% if loop.index0 == 0 %}
+            {% if loop.index0 == 0 and config['PLUG'] == True %}
                 <div class="panel panel-primary">
                     <div class="panel-body">
                         <div class="plug-body">
