@@ -1,0 +1,3 @@
+[submodule "quotefault/static/css/csh-material-bootstrap"]
+	path = quotefault/static/css/csh-material-bootstrap
+	url = https://github.com/ComputerScienceHouse/csh-material-bootstrap

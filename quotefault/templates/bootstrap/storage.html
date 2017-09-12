@@ -1,0 +1,43 @@
+{% extends "bootstrap/base.html" %}
+{% block body %}
+    <div class="container">
+        {% for quote in newQuotes %}
+            {% if loop.index0 == 0 %}
+                <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <div class="plug-body">
+                            <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug">
+                                <img style="width: 100%" src="https://plug.csh.rit.edu/data"
+                                     alt="Advertisements by CSH: Plug">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    {{ quote.quote }} - {{ quote.speaker }}
+                </div>
+                <div class="panel-footer">
+                    Submitted by {{ quote.submitter }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}
+                </div>
+            </div>
+        {% endfor %}
+        {% if oldQuotes|length > 0 %}
+        <a href="#moreQuotes" data-toggle="collapse" class="btn btn-default center-block">But wait, there's more!</a>
+        <div id="moreQuotes" class="collapse">
+            {% for quote in oldQuotes %}
+                <div class="panel panel-primary">
+                    <div class="panel-body">
+                        {{ quote.quote }} - {{ quote.speaker }}
+                    </div>
+                    <div class="panel-footer">
+                        Submitted by {{ quote.submitter }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    </div>
+{% endblock %}

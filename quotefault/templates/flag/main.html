@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 <head>
-    <title>Quotefault Main</title>
-    <link type="text/css" rel="stylesheet" href="../static/css/cshbootstrap.css" />
+    <title>Quotefault</title>
+    <meta name="theme-color" content="#B0197E">
+    <link rel="manifest" href="/static/manifest.json">
+    <link type="text/css" rel="stylesheet" href="../../static/css/cshbootstrap.css" />
     <!-- overwrites some of cshcss with personal css file -->
-    <link type="text/css" rel="stylesheet" href="../static/css/quotefaultcss.css" />
+    <link type="text/css" rel="stylesheet" href="../../static/css/quotefaultcss.css" />
     <!-- necessary for bootstrap animations -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -40,6 +42,7 @@
 
     <h5>
         <a href="/storage">Quote Storage</a>
+        <a href="/settings">Settings</a>
     </h5>
     <!-- collect submission info when form submit button clicked -->
     <form action="/submit" method="POST">

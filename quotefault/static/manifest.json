@@ -1,0 +1,12 @@
+{
+    "background_color": "#FFF",
+    "description": "",
+    "dir": "auto",
+    "display": "standalone",
+    "lang": "en",
+    "name": "Quotefault",
+    "orientation": "any",
+    "short_name": "Quotefault",
+    "start_url": "/",
+    "theme_color": "#B0197E"
+}
