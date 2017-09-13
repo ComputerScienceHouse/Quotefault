@@ -5,6 +5,7 @@ DEBUG = False
 IP = '127.0.0.1'
 PORT = '8080'
 SERVER_NAME = 'localhost:8080'
+PLUG = True
 #db info
 SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(os.path.join(os.getcwd(), "data.db"))
 #DB_HOST = 'mysql.csh.rit.edu'

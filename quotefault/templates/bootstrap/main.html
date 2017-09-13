@@ -1,0 +1,56 @@
+{% extends "bootstrap/base.html" %}
+{% block body %}
+    <div class="container">
+
+        <!-- flash relevant message when submit button is clicked -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+                {% for category, message in messages %}
+                    <script>
+                        switch (category) {
+                            case warning:
+                                category = warning
+                            case error:
+                                category = danger
+                            case
+                            default:
+                                category = success
+                        }
+                    </script>
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if config['PLUG'] == True %}
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    <div class="plug-body">
+                        <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug">
+                            <img style="width: 100%" src="https://plug.csh.rit.edu/data"
+                                 alt="Advertisements by CSH: Plug">
+                        </a>
+                    </div>
+                </div>
+            </div>
+    {% endif %}
+
+        <div class="panel panel-primary">
+            <div class="panel-body text-center">
+                <form action="/submit" method="POST">
+                    <input type="text" class="form-control"
+                           name="quoteString"
+                           placeholder="Quote">
+                    <input type="text" class="form-control"
+                           name="nameString"
+                           placeholder="Said by...">
+                    <br>
+                    <input type="submit" class="form-control btn btn-default"
+                           value="Submit">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
