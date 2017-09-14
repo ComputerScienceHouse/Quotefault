@@ -24,7 +24,7 @@
         {% endif %}
     {% endwith %}
 
-    {% if config['PLUG'] == True %}
+    {% if config['PLUG'] == True and metadata.plug != 'False' %}
             <div class="panel panel-primary">
                 <div class="panel-body">
                     <div class="plug-body">

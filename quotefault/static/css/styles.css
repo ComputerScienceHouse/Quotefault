@@ -6,7 +6,7 @@ body {
     .panel.panel-primary {
         margin-left: 40px;
         margin-right: 40px;
-        margin-top: 20px;
+        margin-top: 10px;
     }
 }
 
@@ -14,7 +14,7 @@ body {
     .panel.panel-primary {
         margin-left: 30px;
         margin-right: 30px;
-        margin-top: 15px;
+        margin-top: 8px;
     }
 }
 
@@ -22,7 +22,7 @@ body {
     .panel.panel-primary {
         margin-left: 20px;
         margin-right: 20px;
-        margin-top: 10px;
+        margin-top: 6px;
     }
 }
 
@@ -30,7 +30,7 @@ body {
     .panel.panel-primary {
         margin-left: 10px;
         margin-right: 10px;
-        margin-top: 5px;
+        margin-top: 4px;
     }
 }
 
@@ -42,10 +42,6 @@ body {
 
 h5.title{
     word-wrap: break-word;
-}
-
-audio{
-    width: 100%;
 }
 
 div.version{

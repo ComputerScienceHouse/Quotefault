@@ -2,7 +2,7 @@
 {% block body %}
     <div class="container">
         {% for quote in newQuotes %}
-            {% if loop.index0 == 0 and config['PLUG'] == True %}
+            {% if loop.index0 == 0 and config['PLUG'] == True and metadata.plug != 'False' %}
                 <div class="panel panel-primary">
                     <div class="panel-body">
                         <div class="plug-body">
@@ -17,27 +17,28 @@
 
             <div class="panel panel-primary">
                 <div class="panel-body">
-                    {{ quote.quote }} - {{ quote.speaker }}
+                    {{ quote.quote }} <b>- {{ quote.speaker }}</b>
                 </div>
                 <div class="panel-footer">
-                    Submitted by {{ quote.submitter }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}
+                    Submitted by <a href="https://profiles.csh.rit.edu/user/{{ quote.submitter }}">{{ quote.submitter }}</a> on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}
                 </div>
             </div>
         {% endfor %}
         {% if oldQuotes|length > 0 %}
-        <a href="#moreQuotes" data-toggle="collapse" class="btn btn-default center-block">But wait, there's more!</a>
-        <div id="moreQuotes" class="collapse">
-            {% for quote in oldQuotes %}
-                <div class="panel panel-primary">
-                    <div class="panel-body">
-                        {{ quote.quote }} - {{ quote.speaker }}
+            <a href="#moreQuotes" data-toggle="collapse" class="btn btn-default center-block">But wait, there's more!</a>
+            <br>
+            <div id="moreQuotes" class="collapse">
+                {% for quote in oldQuotes %}
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            {{ quote.quote }} <b>- {{ quote.speaker }}</b>
+                        </div>
+                        <div class="panel-footer">
+                            Submitted by <a href="https://profiles.csh.rit.edu/user/{{ quote.submitter }}">{{ quote.submitter }}</a> on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}
+                        </div>
                     </div>
-                    <div class="panel-footer">
-                        Submitted by {{ quote.submitter }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
