@@ -36,8 +36,8 @@ body {
 
 /* The total progress gets shown by event listeners */
 #total-progress {
-  opacity: 0;
-  transition: opacity 0.3s linear;
+    opacity: 0;
+    transition: opacity 0.3s linear;
 }
 
 h5.title{
@@ -79,4 +79,9 @@ div.version{
     margin: auto;
     max-width: 728px;
     max-height: 200px;
+}
+
+/* Alert message font color */
+.alert {
+    color: black;
 }
