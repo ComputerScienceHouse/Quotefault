@@ -48,10 +48,12 @@ def get_metadata():
     uuid = str(session["userinfo"].get("sub", ""))
     uid = str(session["userinfo"].get("preferred_username", ""))
     version = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('utf-8').rstrip()
+    plug = request.cookies.get('plug')
     metadata = {
         "uuid": uuid,
         "uid": uid,
-        "version": version
+        "version": version,
+        "plug": plug
     }
     return metadata
 
@@ -84,11 +86,15 @@ def update_settings():
     metadata = get_metadata()
     if request.form['template'] == "flag":
         resp = make_response(render_template('flag/settings.html', metadata=metadata))
-        resp.set_cookie('flag', 'true')
+        resp.set_cookie('flag', 'True')
         return resp
     else:
         resp = make_response(render_template('bootstrap/settings.html', metadata=metadata))
-        resp.set_cookie('flag', 'false', expires=0)
+        resp.set_cookie('flag', 'False', expires=0)
+        if request.form['plug'] == "off":
+            resp.set_cookie('plug', 'False')
+        else:
+            resp.set_cookie('plug', 'True', expires=0)
         return resp
 
 

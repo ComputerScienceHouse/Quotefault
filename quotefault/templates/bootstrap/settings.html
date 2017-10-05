@@ -10,6 +10,12 @@
                         <option value="flag">Flag</option>
                     </select>
                     <br>
+                    <label for="plug">Plug Ads</label>
+                    <select class="form-control" name="plug" title="Plug Ads">
+                        <option value="on" {% if metadata.plug == 'True' %}selected="selected"{% endif %}>On</option>
+                        <option value="off" {% if metadata.plug == 'False' %}selected="selected"{% endif %}>Off</option>
+                    </select>
+                    <br>
                     <input type="submit" class="form-control"
                            value="Save Changes">
                 </form>
