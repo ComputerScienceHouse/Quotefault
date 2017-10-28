@@ -6,6 +6,8 @@ from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 import os
 import requests
+import random
+import csh_ldap
 
 app = Flask(__name__)
 #look for a config file to associate with a db/port/ip/servername
@@ -24,22 +26,38 @@ auth = OIDCAuthentication(app,
                           issuer=app.config['OIDC_ISSUER'],
                           client_registration_info=app.config['OIDC_CLIENT_CONFIG'])
 
-app.secret_key = 'submission' #allows message flashing, var not actually used
-
 #create the quote table with all relevant columns
 class Quote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     submitter = db.Column(db.String(80))
     quote = db.Column(db.String(200), unique=True)
     speaker = db.Column(db.String(50))
-    quoteTime = db.Column(db.DateTime)
+    submit_time = db.Column(db.DateTime)
+    quote_date = db.Column(db.DateTime)
 
     #initialize a row for the Quote table
-    def __init__(self, submitter, quote, speaker):
-        self.quoteTime = datetime.now()
+    def __init__(self, submitter, quote, speaker, quote_date):
+        self.submit_time = datetime.now()
         self.submitter = submitter
         self.quote = quote
         self.speaker = speaker
+        self.quote_date = quote_date
+
+#generate a random quote to be pulled by various house services
+def randomQuote():
+    quotes = Quote.query.all() #collect all quote rows in the Quote db
+    #create a list to display on the templete using a formatted version of each row as individual items
+    quote_lst_new = []
+    quoteCount = 0
+    for quote_obj in reversed(quotes):
+        while(quoteCount < 30):
+            quote_lst_new.append(
+                " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", said on " + str(quote_obj.quote_date) + ", submitted by " + quote_obj.submitter + " on " + str(
+                    quote_obj.submit_time))
+            quoteCount += 1
+    secure_random = random.SystemRandom()
+    rQuote = secure_random.choice(quote_lst_new)
+    return rQuote
 
 #run the main page by creating the table(s) in the CSH serverspace and rendering the mainpage template
 @app.route('/', methods=['GET'])
@@ -56,14 +74,18 @@ def submit():
         submitter = session['userinfo'].get('preferred_username', '') #submitter will grab UN from OIDC when linked to it
         quote = request.form['quoteString']
         speaker = request.form['nameString']
+        quote_date = request.form['dateSaid']
         quoteCheck = Quote.query.filter(Quote.quote == quote).first() #check for quote duplicate
         #checks for empty quote or submitter
         if quote == '' or speaker == '':
             flash('Empty quote or speaker field, try again!', 'error')
             return render_template('quotefaultmainpage.html'), 200
         elif quoteCheck is None: #no duplicate quotes, proceed with submission
+            #fill in an empty quote_date field
+            if quote_date is None:
+                quote_date = datetime.date().today()
             # create a row for the Quote table
-            new_quote = Quote(submitter=submitter, quote=quote, speaker=speaker)
+            new_quote = Quote(submitter=submitter, quote=quote, speaker=speaker, quote_date=quote_date)
             db.session.add(new_quote)
             db.session.flush()
             # upload the quote
@@ -86,13 +108,13 @@ def get():
     quote_lst_old = [] #for quotes older than a month, reduces clutter by hiding these behind a collapsable section
     quoteCount = 0
     for quote_obj in reversed(quotes):
-        if(quoteCount < 30):
+        if quoteCount < 30:
             quote_lst_new.append(
-                " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
-                    quote_obj.quoteTime))
+                " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", said on " + str(quote_obj.quote_date) + ", submitted by " + quote_obj.submitter + " on " + str(
+                    quote_obj.submit_time))
             quoteCount += 1
         else:
             quote_lst_old.append(
-                " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", submitted by " + quote_obj.submitter + " on " + str(
-                    quote_obj.quoteTime))
+                " \"" + quote_obj.quote + "\" - " + quote_obj.speaker + ", said on " + str(quote_obj.quote_date) + ", submitted by " + quote_obj.submitter + " on " + str(
+                    quote_obj.submit_time))
     return render_template('quotefaultstorage.html', newQuotes=quote_lst_new, oldQuotes=quote_lst_old)

@@ -4,6 +4,7 @@ import os
 DEBUG = False
 IP = os.environ.get('QUOTEFAULT_IP', '127.0.0.1')
 PORT = os.environ.get('QUOTEFAULT_PORT', '8080')
+SECRET_KEY = os.environ.get('QUOTEFAULT_SECRET', '')
 SERVER_NAME = os.environ.get('QUOTEFAULT_SERVER_NAME', 'quotefault.csh.rit.edu')
 #db info
 SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///{}'.format(os.path.join(os.getcwd(), "data.db")))
