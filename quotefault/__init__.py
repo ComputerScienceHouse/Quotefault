@@ -107,6 +107,12 @@ def submit():
                                             '')  # submitter will grab UN from OIDC when linked to it
         metadata = get_metadata()
         quote = request.form['quoteString']
+        # standardises quotation marks to double quotes
+        if quote[0] == '"' or quote[0] == "'":
+                quote = quote[1:]
+        if quote[-1] == '"' or quote[0] == "'":
+                quote = quote[:-1]
+        quote = '"' + quote + '"'
         speaker = request.form['nameString']
         quoteCheck = Quote.query.filter(Quote.quote == quote).first()  # check for quote duplicate
         # checks for empty quote or submitter
