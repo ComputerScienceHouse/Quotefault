@@ -110,7 +110,7 @@ def submit():
         # standardises quotation marks to double quotes
         if quote[0] == '"' or quote[0] == "'":
                 quote = quote[1:]
-        if quote[-1] == '"' or quote[0] == "'":
+        if quote[-1] == '"' or quote[-1] == "'":
                 quote = quote[:-1]
         quote = '"' + quote + '"'
         speaker = request.form['nameString']
