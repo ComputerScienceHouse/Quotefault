@@ -3,7 +3,7 @@ import os
 # Flask config
 DEBUG = False
 IP = os.environ.get('QUOTEFAULT_IP', '127.0.0.1')
-PORT = os.environ.get('QUOTEFAULT_PORT', '8080')
+PORT = int(os.environ.get('QUOTEFAULT_PORT', '8080'))
 SERVER_NAME = os.environ.get('QUOTEFAULT_SERVER_NAME', 'quotefault.csh.rit.edu')
 PLUG = True
 #db info
