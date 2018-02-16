@@ -148,7 +148,11 @@ def submit():
 @app.route('/storage', methods=['GET'])
 @auth.oidc_auth
 def get():
-    quotes = Quote.query.all()  # collect all quote rows in the Quote db
+    submitter = request.args.get('submitter') # get submitter from url query string
+    if submitter is not None:
+        quotes = Quote.query.filter(Quote.submitter == submitter) # filter quotes by submitter
+    else:
+        quotes = Quote.query.all()  # collect all quote rows in the Quote db
     # create a list to display on the templete using a formatted version of each row as individual items
     quote_lst_new = []
     quote_lst_old = []  # for quotes older than a month, reduces clutter by hiding these behind a collapsable section
