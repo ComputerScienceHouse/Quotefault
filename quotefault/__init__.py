@@ -150,7 +150,7 @@ def submit():
 def get():
     submitter = request.args.get('submitter') # get submitter from url query string
     if submitter is not None:
-        quotes = Quote.query.filter(Quote.submitter == submitter) # filter quotes by submitter
+        quotes = Quote.query.filter(Quote.submitter == submitter).all() # filter quotes by submitter
     else:
         quotes = Quote.query.all()  # collect all quote rows in the Quote db
     # create a list to display on the templete using a formatted version of each row as individual items
