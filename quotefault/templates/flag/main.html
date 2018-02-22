@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
     <title>Quotefault</title>
     <meta name="theme-color" content="#B0197E">
@@ -11,52 +12,59 @@
     <!-- necessary for bootstrap animations -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png?v=bOLj7Rvb3Q">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png?v=bOLj7Rvb3Q">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png?v=bOLj7Rvb3Q">
+    <link rel="manifest" href="/static/site.webmanifest?v=bOLj7Rvb3Q">
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg?v=bOLj7Rvb3Q" color="#b0197e">
+    <link rel="shortcut icon" href="/static/favicon.ico?v=bOLj7Rvb3Q">
+    <meta name="apple-mobile-web-app-title" content="Quotefault">
+    <meta name="application-name" content="Quotefault">
+    <meta name="msapplication-TileColor" content="#ff0000">
+    <meta name="msapplication-config" content="/static/browserconfig.xml?v=bOLj7Rvb3Q">
+    <meta name="theme-color" content="#b0197e">
 </head>
 <!-- flash relevant message when submit button is clicked -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <ul class=alert, style="list-style: none">
-        {% for category, message in messages %}
-            <script>
-                switch(category){
-                    case warning:
-                        category = warning
-                    case error:
-                        category = danger
-                    case default:
-                        category = success
-                }
-            </script>
-            <li class="alert alert-{{ category }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages %}
+<ul class=alert, style="list-style: none">
+    {% for category, message in messages %}
+    <script>
+        switch (category) {
+            case warning:
+                category = warning
+            case error:
+                category = danger
+            case
+            default:
+                category = success
+        }
+
+    </script>
+    <li class="alert alert-{{ category }}">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %} {% endwith %}
 
 <body>
 
-<div class="contentContainer">
-    <h1>
-        Quotefault!
-    </h1>
+    <div class="contentContainer">
+        <h1>
+            Quotefault!
+        </h1>
 
-    <h5>
-        <a href="/storage">Quote Storage</a>
-        <a href="/settings">Settings</a>
-    </h5>
-    <!-- collect submission info when form submit button clicked -->
-    <form action="/submit" method="POST">
-        <input type="text"
-                name="quoteString"
-                placeholder="Quote">
-        <input type="text"
-                name="nameString"
-                placeholder="Said by...">
-        <br>
-        <input type="submit"
-                value="Submit">
-    </form>
-</div>
+        <h5>
+            <a href="/storage">Quote Storage</a>
+            <a href="/settings">Settings</a>
+        </h5>
+        <!-- collect submission info when form submit button clicked -->
+        <form action="/submit" method="POST">
+            <input type="text" name="quoteString" placeholder="Quote">
+            <input type="text" name="nameString" placeholder="Said by...">
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
 
 </body>
+
 </html>

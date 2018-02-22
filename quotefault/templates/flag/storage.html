@@ -1,44 +1,57 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
     <title>Quotefault Storage</title>
     <meta name="theme-color" content="#B0197E">
     <link rel="manifest" href="/static/manifest.json">
-    <link type="text/css" rel="stylesheet" href="../../static/css/cshbootstrap.css"/>
+    <link type="text/css" rel="stylesheet" href="../../static/css/cshbootstrap.css" />
     <!-- overwrites some of cshcss with personal css file -->
-    <link type="text/css" rel="stylesheet" href="../../static/css/quotefaultcss.css"/>
+    <link type="text/css" rel="stylesheet" href="../../static/css/quotefaultcss.css" />
     <!-- necessary for bootstrap animations -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png?v=bOLj7Rvb3Q">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png?v=bOLj7Rvb3Q">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png?v=bOLj7Rvb3Q">
+    <link rel="manifest" href="/static/site.webmanifest?v=bOLj7Rvb3Q">
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg?v=bOLj7Rvb3Q" color="#b0197e">
+    <link rel="shortcut icon" href="/static/favicon.ico?v=bOLj7Rvb3Q">
+    <meta name="apple-mobile-web-app-title" content="Quotefault">
+    <meta name="application-name" content="Quotefault">
+    <meta name="msapplication-TileColor" content="#ff0000">
+    <meta name="msapplication-config" content="/static/browserconfig.xml?v=bOLj7Rvb3Q">
+    <meta name="theme-color" content="#b0197e">
 </head>
 
 <body>
-<div class="contentContainer">
-    <h1>
-        Quote Storage
-    </h1>
+    <div class="contentContainer">
+        <h1>
+            Quote Storage
+        </h1>
 
-    <h5>
-        <a href="/">Main</a>
-        <a href="/settings">Settings</a>
-    </h5>
-    <!-- display stored quotes from the Quotefault db -->
-    <ul style="list-style: none">
-        {% for quote in newQuotes %}
+        <h5>
+            <a href="/">Main</a>
+            <a href="/settings">Settings</a>
+        </h5>
+        <!-- display stored quotes from the Quotefault db -->
+        <ul style="list-style: none">
+            {% for quote in newQuotes %}
             <li>{{ quote.quote }} - {{ quote.speaker }} Submitted by {{ quote.submitter }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}</li>
-        {% endfor %}
-    </ul>
-    {% if oldQuotes|length > 0 %}
+            {% endfor %}
+        </ul>
+        {% if oldQuotes|length > 0 %}
         <a href="#moreQuotes" data-toggle="collapse">But wait, there's more!</a>
         <div id="moreQuotes" class="collapse">
             <ul style="list-style: none">
                 {% for quote in oldQuotes %}
-                    <li>{{ quote.quote }} - {{ quote.speaker }} Submitted by {{ quote.submitter }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}</li>
+                <li>{{ quote.quote }} - {{ quote.speaker }} Submitted by {{ quote.submitter }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}</li>
                 {% endfor %}
             </ul>
         </div>
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
 </body>
+
 </html>
