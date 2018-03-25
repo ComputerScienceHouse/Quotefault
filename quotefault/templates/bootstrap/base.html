@@ -6,15 +6,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#B0197E">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/css/csh-material-bootstrap/dist/css/csh-material-bootstrap.css">
+    <link href="https://swag.csh.rit.edu/static/vendor/select2-bootstrap-theme/select2-bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="manifest" href="/static/manifest.json">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png?v=bOLj7Rvb3Q">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png?v=bOLj7Rvb3Q">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png?v=bOLj7Rvb3Q">
-    <link rel="manifest" href="/static/site.webmanifest?v=bOLj7Rvb3Q">
     <link rel="mask-icon" href="/static/safari-pinned-tab.svg?v=bOLj7Rvb3Q" color="#b0197e">
     <link rel="shortcut icon" href="/static/favicon.ico?v=bOLj7Rvb3Q">
     <meta name="apple-mobile-web-app-title" content="Quotefault">
@@ -98,6 +100,9 @@
             </div>
         </footer>
     </body>
+
+    {% block scripts %}
+    {% endblock %}
 </body>
 
 </html>

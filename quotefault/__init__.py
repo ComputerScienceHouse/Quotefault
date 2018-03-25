@@ -4,6 +4,7 @@ import subprocess
 from datetime import datetime
 
 import requests
+from csh_ldap import CSHLDAP
 from flask import Flask, render_template, request, flash, session, make_response
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
@@ -25,7 +26,13 @@ auth = OIDCAuthentication(app,
                           issuer=app.config['OIDC_ISSUER'],
                           client_registration_info=app.config['OIDC_CLIENT_CONFIG'])
 
+# Create CSHLDAP connection
+_ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
+                app.config["LDAP_BIND_PW"])
+
 app.secret_key = 'submission'  # allows message flashing, var not actually used
+
+from .ldap import get_all_members, ldap_get_member
 
 
 # create the quote table with all relevant columns
@@ -64,10 +71,11 @@ def get_metadata():
 def main():
     db.create_all()
     metadata = get_metadata()
+    all_members = get_all_members()
     if request.cookies.get('flag'):
         return render_template('flag/main.html', metadata=metadata)
     else:
-        return render_template('bootstrap/main.html', metadata=metadata)
+        return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members)
 
 
 @app.route('/settings', methods=['GET'])
@@ -109,9 +117,9 @@ def submit():
         quote = request.form['quoteString']
         # standardises quotation marks to double quotes
         if quote[0] == '"' or quote[0] == "'":
-                quote = quote[1:]
+            quote = quote[1:]
         if quote[-1] == '"' or quote[-1] == "'":
-                quote = quote[:-1]
+            quote = quote[:-1]
         quote = '"' + quote + '"'
         speaker = request.form['nameString']
         quoteCheck = Quote.query.filter(Quote.quote == quote).first()  # check for quote duplicate
@@ -148,25 +156,31 @@ def submit():
 @app.route('/storage', methods=['GET'])
 @auth.oidc_auth
 def get():
-    submitter = request.args.get('submitter') # get submitter from url query string
+    submitter = request.args.get('submitter')  # get submitter from url query string
     if submitter is not None:
-        quotes = Quote.query.filter(Quote.submitter == submitter).all() # filter quotes by submitter
+        quotes = Quote.query.filter(Quote.submitter == submitter).all()  # filter quotes by submitter
     else:
-        quotes = Quote.query.all()  # collect all quote rows in the Quote db
-    # create a list to display on the templete using a formatted version of each row as individual items
-    quote_lst_new = []
-    quote_lst_old = []  # for quotes older than a month, reduces clutter by hiding these behind a collapsable section
-    quoteCount = 0
+        quotes = Quote.query.order_by(Quote.quoteTime.desc()).limit(20).all()  # collect all quote rows in the Quote db
     metadata = get_metadata()
-    for quote_obj in reversed(quotes):
-        if quoteCount < 20:
-            quote_lst_new.append(quote_obj)
-            quoteCount += 1
-        else:
-            quote_lst_old.append(quote_obj)
     if request.cookies.get('flag'):
-        return render_template('flag/storage.html', newQuotes=quote_lst_new, oldQuotes=quote_lst_old,
-                               metadata=metadata)
+        return render_template('flag/storage.html', quotes=quotes, metadata=metadata)
     else:
-        return render_template('bootstrap/storage.html', newQuotes=quote_lst_new, oldQuotes=quote_lst_old,
+        return render_template('bootstrap/storage.html', quotes=quotes,
+                               metadata=metadata)
+
+
+# display stored quotes
+@app.route('/additional', methods=['GET'])
+@auth.oidc_auth
+def additional_quotes():
+    submitter = request.args.get('submitter')  # get submitter from url query string
+    if submitter is not None:
+        quotes = Quote.query.filter(Quote.submitter == submitter).all()  # filter quotes by submitter
+    else:
+        quotes = Quote.query.order_by(Quote.quoteTime.desc()).all()  # collect all quote rows in the Quote db
+    metadata = get_metadata()
+    if request.cookies.get('flag'):
+        return render_template('flag/additional_quotes.html', quotes=quotes[20:], metadata=metadata)
+    else:
+        return render_template('bootstrap/additional_quotes.html', quotes=quotes[20:],
                                metadata=metadata)
