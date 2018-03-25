@@ -114,6 +114,7 @@ def submit():
         submitter = session['userinfo'].get('preferred_username',
                                             '')  # submitter will grab UN from OIDC when linked to it
         metadata = get_metadata()
+        all_members = get_all_members()
         quote = request.form['quoteString']
         # standardises quotation marks to double quotes
         if quote[0] == '"' or quote[0] == "'":
@@ -129,7 +130,7 @@ def submit():
             if request.cookies.get('flag'):
                 return render_template('flag/main.html', metadata=metadata), 200
             else:
-                return render_template('bootstrap/main.html', metadata=metadata), 200
+                return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
         elif quoteCheck is None:  # no duplicate quotes, proceed with submission
             # create a row for the Quote table
             new_quote = Quote(submitter=submitter, quote=quote, speaker=speaker)
@@ -143,13 +144,13 @@ def submit():
             if request.cookies.get('flag'):
                 return render_template('flag/main.html', metadata=metadata), 200
             else:
-                return render_template('bootstrap/main.html', metadata=metadata), 200
+                return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
         else:  # duplicate quote found, bounce the user back to square one
             flash('Quote already submitted!', 'warning')
             if request.cookies.get('flag'):
                 return render_template('flag/main.html', metadata=metadata), 200
             else:
-                return render_template('bootstrap/main.html', metadata=metadata), 200
+                return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
 
 
 # display stored quotes
