@@ -1,5 +1,6 @@
 alembic
 click
+csh_ldap>=2.0.2
 Flask
 Flask-Migrate
 Flask-pyoidc
@@ -17,4 +18,3 @@ setuptools
 SQLAlchemy
 Werkzeug
 wheel
-

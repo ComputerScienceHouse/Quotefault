@@ -38,7 +38,7 @@
         <!-- display stored quotes from the Quotefault db -->
         <ul style="list-style: none">
             {% for quote in newQuotes %}
-            <li>{{ quote.quote }} - {{ quote.speaker }} Submitted by {{ quote.submitter }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}</li>
+            <li>{{ quote.quote }} - {{ get_display_name(quote.speaker) }} Submitted by {{ get_display_name(quote.submitter) }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}</li>
             {% endfor %}
         </ul>
         {% if oldQuotes|length > 0 %}

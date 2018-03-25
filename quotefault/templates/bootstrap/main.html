@@ -3,8 +3,8 @@
     <div class="container">
 
         <!-- flash relevant message when submit button is clicked -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
                 {% for category, message in messages %}
                     <script>
                         switch (category) {
@@ -21,10 +21,10 @@
                         {{ message }}
                     </div>
                 {% endfor %}
-        {% endif %}
-    {% endwith %}
+            {% endif %}
+        {% endwith %}
 
-    {% if config['PLUG'] == True and metadata.plug != 'False' %}
+        {% if config['PLUG'] == True and metadata.plug != 'False' %}
             <div class="panel panel-primary">
                 <div class="panel-body">
                     <div class="plug-body">
@@ -35,7 +35,7 @@
                     </div>
                 </div>
             </div>
-    {% endif %}
+        {% endif %}
 
         <div class="panel panel-primary">
             <div class="panel-body text-center">
@@ -43,9 +43,11 @@
                     <input type="text" class="form-control"
                            name="quoteString"
                            placeholder="Quote">
-                    <input type="text" class="form-control"
-                           name="nameString"
-                           placeholder="Said by...">
+                    <select class="select2-select" name="nameString">
+                        {% for member in all_members %}
+                            <option value="{{ member.uid }}">{{ member.cn }} ({{ member.uid }})</option>
+                        {% endfor %}
+                    </select>
                     <br>
                     <input type="submit" class="form-control btn btn-default"
                            value="Submit">
