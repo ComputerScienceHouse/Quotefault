@@ -41,9 +41,12 @@
             <li>{{ quote.quote }} - {{ get_display_name(quote.speaker) }} Submitted by {{ get_display_name(quote.submitter) }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}</li>
             {% endfor %}
         </ul>
-        <a href="#moreQuotes" id="get_more" data-toggle="collapse">But wait, there's more!</a>
-        <div id="moreQuotes" class="collapse" aria-expanded="false">
-        </div>
+        {% if metadata['submitter'] == None and metadata['speaker'] == None %}
+            <a href="#moreQuotes" id="get_more" data-toggle="collapse">But wait, there's more!</a>
+            <br>
+            <div id="moreQuotes" class="collapse" aria-expanded="false">
+            </div>
+        {% endif %}
     </div>
 
     <script src="{{ url_for('static', filename='js/load_more.js') }}"></script>

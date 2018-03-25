@@ -156,12 +156,17 @@ def submit():
 @app.route('/storage', methods=['GET'])
 @auth.oidc_auth
 def get():
-    submitter = request.args.get('submitter')  # get submitter from url query string
-    if submitter is not None:
-        quotes = Quote.query.filter(Quote.submitter == submitter).all()  # filter quotes by submitter
+    metadata = get_metadata()
+    metadata['submitter'] = request.args.get('submitter')  # get submitter from url query string
+    metadata['speaker'] = request.args.get('speaker')  # get submitter from url query string
+
+    if metadata['submitter'] is not None:
+        quotes = Quote.query.filter(Quote.submitter == metadata['submitter']).all()  # filter quotes by submitter
+    elif metadata['speaker'] is not None:
+        quotes = Quote.query.filter(Quote.speaker == metadata['speaker']).all()  # filter quotes by speaker
     else:
         quotes = Quote.query.order_by(Quote.quoteTime.desc()).limit(20).all()  # collect all quote rows in the Quote db
-    metadata = get_metadata()
+
     if request.cookies.get('flag'):
         return render_template('flag/storage.html', quotes=quotes, metadata=metadata)
     else:
@@ -173,11 +178,7 @@ def get():
 @app.route('/additional', methods=['GET'])
 @auth.oidc_auth
 def additional_quotes():
-    submitter = request.args.get('submitter')  # get submitter from url query string
-    if submitter is not None:
-        quotes = Quote.query.filter(Quote.submitter == submitter).all()  # filter quotes by submitter
-    else:
-        quotes = Quote.query.order_by(Quote.quoteTime.desc()).all()  # collect all quote rows in the Quote db
+    quotes = Quote.query.order_by(Quote.quoteTime.desc()).all()  # collect all quote rows in the Quote db
     metadata = get_metadata()
     if request.cookies.get('flag'):
         return render_template('flag/additional_quotes.html', quotes=quotes[20:], metadata=metadata)
