@@ -160,20 +160,27 @@ def get():
     if submitter is not None:
         quotes = Quote.query.filter(Quote.submitter == submitter).all()  # filter quotes by submitter
     else:
-        quotes = Quote.query.all()  # collect all quote rows in the Quote db
-    # create a list to display on the templete using a formatted version of each row as individual items
-    quote_lst_new = []
-    quote_lst_old = []  # for quotes older than a month, reduces clutter by hiding these behind a collapsable section
-    quoteCount = 0
+        quotes = Quote.query.order_by(Quote.quoteTime.desc()).limit(20).all()  # collect all quote rows in the Quote db
     metadata = get_metadata()
-    for quote_obj in reversed(quotes):
-        if quoteCount < 20:
-            quote_lst_new.append(quote_obj)
-            quoteCount += 1
-        else:
-            quote_lst_old.append(quote_obj)
     if request.cookies.get('flag'):
-        return render_template('flag/storage.html', newQuotes=quote_lst_new, oldQuotes=quote_lst_old, metadata=metadata)
+        return render_template('flag/storage.html', quotes=quotes, metadata=metadata)
     else:
-        return render_template('bootstrap/storage.html', newQuotes=quote_lst_new, oldQuotes=quote_lst_old,
+        return render_template('bootstrap/storage.html', quotes=quotes,
+                               metadata=metadata)
+
+
+# display stored quotes
+@app.route('/additional', methods=['GET'])
+@auth.oidc_auth
+def additional_quotes():
+    submitter = request.args.get('submitter')  # get submitter from url query string
+    if submitter is not None:
+        quotes = Quote.query.filter(Quote.submitter == submitter).all()  # filter quotes by submitter
+    else:
+        quotes = Quote.query.order_by(Quote.quoteTime.desc()).all()  # collect all quote rows in the Quote db
+    metadata = get_metadata()
+    if request.cookies.get('flag'):
+        return render_template('flag/additional_quotes.html', quotes=quotes[20:], metadata=metadata)
+    else:
+        return render_template('bootstrap/additional_quotes.html', quotes=quotes[20:],
                                metadata=metadata)

@@ -101,14 +101,8 @@
         </footer>
     </body>
 
-    <script>
-        $(document).ready(function () {
-            $('.select2-select').select2({
-                width: '100%',
-                theme: "bootstrap"
-            });
-        });
-    </script>
+    {% block scripts %}
+    {% endblock %}
 </body>
 
 </html>
