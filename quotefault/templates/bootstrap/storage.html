@@ -3,8 +3,8 @@
     <div class="container">
         {% for quote in quotes %}
             {% if loop.index0 == 0 and config['PLUG'] == True and metadata.plug != 'False' %}
-                <div class="panel panel-primary">
-                    <div class="panel-body">
+                <div class="card my-3">
+                    <div class="card-body">
                         <div class="plug-body">
                             <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug">
                                 <img style="width: 100%" src="https://plug.csh.rit.edu/data"
@@ -15,11 +15,11 @@
                 </div>
             {% endif %}
 
-            <div class="panel panel-primary">
-                <div class="panel-body">
+            <div class="card m-3">
+                <div class="card-body">
                     {{ quote.quote }} <b>- {{ get_display_name(quote.speaker) }}</b>
                 </div>
-                <div class="panel-footer">
+                <div class="card-footer">
                     Submitted by <a href="https://profiles.csh.rit.edu/user/{{ quote.submitter }}">{{ get_display_name(quote.submitter) }}</a> on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}
                 </div>
             </div>

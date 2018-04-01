@@ -1,7 +1,3 @@
-body {
-    margin-top: 60px;
-}
-
 @media screen and (max-width: 1680px) {
     .panel.panel-primary {
         margin-left: 40px;
@@ -70,11 +66,10 @@ div.version{
 }
 
 /* CSH Plug Styling */
-.plug-body {
+.plug-body img {
     text-align: center;
     margin: auto;
-    max-width: 728px;
-    max-height: 200px;
+    max-width: 100%;
 }
 
 /* Alert message font color */
