@@ -4,16 +4,31 @@
 <head>
     <title>Quotefault</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="theme-color" content="#B0197E">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="/static/css/csh-material-bootstrap/dist/css/csh-material-bootstrap.css">
-    <link href="https://swag.csh.rit.edu/static/vendor/select2-bootstrap-theme/select2-bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+          href="https://s3.csh.rit.edu/csh-material-bootstrap/4.0.0/dist/csh-material-bootstrap.min.css" media="screen">
+    <link href="https://swag.csh.rit.edu/static/vendor/select2-bootstrap-theme/select2-bootstrap.min.css"
+          rel="stylesheet"/>
+
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="manifest" href="/static/manifest.json">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap Required JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js"
+            integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl"
+            crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png?v=bOLj7Rvb3Q">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png?v=bOLj7Rvb3Q">
@@ -28,82 +43,57 @@
 </head>
 
 <body>
-    {% block nav %}
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+{% block nav %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/">Quotefault</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="/storage">
-                            <span class="glyphicon glyphicon-th-list"></span>
+            <a class="navbar-brand abs" href="/">Quotefault</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                    data-target="#navbarResponsive">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item navbar-user dropdown">
+                        <a class="nav-link" href="/storage">
+                            <i class="fas fa-th-list"></i>
                             Storage
                         </a>
                     </li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown navbar-user">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <img src="https://profiles.csh.rit.edu/image/{{ metadata["uid"] }}"
-                                 title="{{ metadata["uid"] }}">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item navbar-user dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="user01">
+                            <img src="https://profiles.csh.rit.edu/image/{{ metadata["uid"] }}">
                             {{ metadata["uid"] }}
                             <span class="caret"></span>
                         </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="/settings">
-                                    <span class="glyphicon glyphicon-cog"></span>
-                                    Settings
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="https://profiles.csh.rit.edu/user/{{ metadata[" uid "] }}">
-                                    <span class="glyphicon glyphicon-user"></span>
-                                    Profile
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://members.csh.rit.edu/">
-                                    <span class="glyphicon glyphicon-globe"></span>
-                                    Members Portal
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/logout">
-                                    Logout
-                                </a>
-                            </li>
-                        </ul>
+
+                        <div class="dropdown-menu" aria-labelledby="user01">
+                            <a class="dropdown-item" href="/settings">Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout">Logout</a>
+                        </div>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-    {% endblock %}
+{% endblock %}
 
-    <body>
-        {% block body %} {% endblock %}
-        <footer>
-            <br>
-            <div class="version">
-                <a class="footer-version" href="https://github.com/dantayy/quotefault">
+<body>
+{% block body %} {% endblock %}
+<footer>
+    <br>
+    <div class="version">
+        <a class="footer-version" href="https://github.com/dantayy/quotefault">
             Quotefault ({{ metadata.version }})
         </a>
-            </div>
-        </footer>
-    </body>
+    </div>
+</footer>
+</body>
 
-    {% block scripts %}
-    {% endblock %}
+{% block scripts %}
+{% endblock %}
 </body>
 
 </html>
