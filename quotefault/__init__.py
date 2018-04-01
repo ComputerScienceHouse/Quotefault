@@ -161,10 +161,13 @@ def get():
     metadata['submitter'] = request.args.get('submitter')  # get submitter from url query string
     metadata['speaker'] = request.args.get('speaker')  # get submitter from url query string
 
-    if metadata['submitter'] is not None:
-        quotes = Quote.query.filter(Quote.submitter == metadata['submitter']).all()  # filter quotes by submitter
+    if metadata['speaker'] is not None and metadata['submitter'] is not None:
+        quotes = Quote.query.order_by(Quote.quoteTime.desc()).filter(Quote.submitter == metadata['submitter'],
+                                                                     Quote.speaker == metadata['speaker']).all()
+    elif metadata['submitter'] is not None:
+        quotes = Quote.query.order_by(Quote.quoteTime.desc()).filter(Quote.submitter == metadata['submitter']).all()
     elif metadata['speaker'] is not None:
-        quotes = Quote.query.filter(Quote.speaker == metadata['speaker']).all()  # filter quotes by speaker
+        quotes = Quote.query.order_by(Quote.quoteTime.desc()).filter(Quote.speaker == metadata['speaker']).all()
     else:
         quotes = Quote.query.order_by(Quote.quoteTime.desc()).limit(20).all()  # collect all quote rows in the Quote db
 
