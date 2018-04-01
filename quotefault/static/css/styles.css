@@ -314,3 +314,7 @@ div.version{
 .select2-container--bootstrap.select2-container--disabled.select2-container--focus .select2-selection {
   box-shadow: none;
 }
+
+#get_more {
+  width: 100%;
+}
