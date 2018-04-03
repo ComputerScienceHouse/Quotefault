@@ -1,8 +1,8 @@
 {% extends "bootstrap/base.html" %}
 {% block body %}
     <div class="container">
-        <div class="panel panel-primary">
-            <div class="panel-body text-center">
+        <div class="card my-3">
+            <div class="card-body text-center">
                 <form action="/settings" method="POST">
                     <label for="template">Template</label>
                     <select class="form-control" name="template" title="Template">
@@ -16,7 +16,7 @@
                         <option value="off" {% if metadata.plug == 'False' %}selected="selected"{% endif %}>Off</option>
                     </select>
                     <br>
-                    <input type="submit" class="form-control"
+                    <input type="submit" class="btn btn-secondary center-block form-control"
                            value="Save Changes">
                 </form>
             </div>
