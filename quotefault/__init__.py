@@ -110,47 +110,52 @@ def update_settings():
 @app.route('/submit', methods=['POST'])
 @auth.oidc_auth
 def submit():
-    if request.method == 'POST':
-        submitter = session['userinfo'].get('preferred_username',
-                                            '')  # submitter will grab UN from OIDC when linked to it
-        metadata = get_metadata()
-        all_members = get_all_members()
-        quote = request.form['quoteString']
-        # standardises quotation marks to double quotes
-        if quote[0] == '"' or quote[0] == "'":
-            quote = quote[1:]
-        if quote[-1] == '"' or quote[-1] == "'":
-            quote = quote[:-1]
-        quote = '"' + quote + '"'
-        speaker = request.form['nameString']
-        quoteCheck = Quote.query.filter(Quote.quote == quote).first()  # check for quote duplicate
-        # checks for empty quote or submitter
-        if quote == '' or speaker == '':
-            flash('Empty quote or speaker field, try again!', 'error')
-            if request.cookies.get('flag'):
-                return render_template('flag/main.html', metadata=metadata), 200
-            else:
-                return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
-        elif quoteCheck is None:  # no duplicate quotes, proceed with submission
-            # create a row for the Quote table
-            new_quote = Quote(submitter=submitter, quote=quote, speaker=speaker)
-            db.session.add(new_quote)
-            db.session.flush()
-            # upload the quote
-            db.session.commit()
-            # create a message to flash for successful submission
-            flash('Submission Successful!')
-            # return something to complete submission
-            if request.cookies.get('flag'):
-                return render_template('flag/main.html', metadata=metadata), 200
-            else:
-                return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
-        else:  # duplicate quote found, bounce the user back to square one
-            flash('Quote already submitted!', 'warning')
-            if request.cookies.get('flag'):
-                return render_template('flag/main.html', metadata=metadata), 200
-            else:
-                return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
+    # submitter will grab UN from OIDC when linked to it
+    submitter = session['userinfo'].get('preferred_username', '')
+    metadata = get_metadata()
+    all_members = get_all_members()
+    quote = request.form['quoteString']
+
+    # standardises quotation marks to remove them
+    if quote[0] == '"' or quote[0] == "'":
+        quote = quote[1:]
+    if quote[-1] == '"' or quote[-1] == "'":
+        quote = quote[:-1]
+    quote = '"' + quote + '"'
+
+    speaker = request.form['nameString']
+    # check for quote duplicate
+    quoteCheck = Quote.query.filter(Quote.quote == quote).first()
+
+    # checks for empty quote or submitter
+    if quote == '' or speaker == '':
+        flash('Empty quote or speaker field, try again!', 'error')
+        if request.cookies.get('flag'):
+            return render_template('flag/main.html', metadata=metadata), 200
+        return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
+    elif submitter == speaker:
+        flash('You can\'t quote yourself! Come on', 'error')
+        if request.cookies.get('flag'):
+            return render_template('flag/main.html', metadata=metadata), 200
+        return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
+    elif quoteCheck is None:  # no duplicate quotes, proceed with submission
+        # create a row for the Quote table
+        new_quote = Quote(submitter=submitter, quote=quote, speaker=speaker)
+        db.session.add(new_quote)
+        db.session.flush()
+        # upload the quote
+        db.session.commit()
+        # create a message to flash for successful submission
+        flash('Submission Successful!')
+        # return something to complete submission
+        if request.cookies.get('flag'):
+            return render_template('flag/main.html', metadata=metadata), 200
+        return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
+    else:  # duplicate quote found, bounce the user back to square one
+        flash('Quote already submitted!', 'warning')
+        if request.cookies.get('flag'):
+            return render_template('flag/main.html', metadata=metadata), 200
+        return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
 
 
 # display stored quotes
