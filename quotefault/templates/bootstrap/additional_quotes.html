@@ -6,7 +6,7 @@
         <div class="card-footer">
             Submitted by <a
                 href="https://profiles.csh.rit.edu/profile/{{ quote.submitter }}">{{ get_display_name(quote.submitter) }}</a>
-            on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}
+            on {{ quote.quote_time.strftime('%Y-%m-%d %H:%M:%S') }}
         </div>
     </div>
 {% endfor %}
