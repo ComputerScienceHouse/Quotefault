@@ -41,11 +41,11 @@ class Quote(db.Model):
     submitter = db.Column(db.String(80))
     quote = db.Column(db.String(200), unique=True)
     speaker = db.Column(db.String(50))
-    quoteTime = db.Column(db.DateTime)
+    quote_time = db.Column(db.DateTime)
 
     # initialize a row for the Quote table
     def __init__(self, submitter, quote, speaker):
-        self.quoteTime = datetime.now()
+        self.quote_time = datetime.now()
         self.submitter = submitter
         self.quote = quote
         self.speaker = speaker
@@ -167,14 +167,14 @@ def get():
     metadata['speaker'] = request.args.get('speaker')  # get submitter from url query string
 
     if metadata['speaker'] is not None and metadata['submitter'] is not None:
-        quotes = Quote.query.order_by(Quote.quoteTime.desc()).filter(Quote.submitter == metadata['submitter'],
+        quotes = Quote.query.order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter'],
                                                                      Quote.speaker == metadata['speaker']).all()
     elif metadata['submitter'] is not None:
-        quotes = Quote.query.order_by(Quote.quoteTime.desc()).filter(Quote.submitter == metadata['submitter']).all()
+        quotes = Quote.query.order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter']).all()
     elif metadata['speaker'] is not None:
-        quotes = Quote.query.order_by(Quote.quoteTime.desc()).filter(Quote.speaker == metadata['speaker']).all()
+        quotes = Quote.query.order_by(Quote.quote_time.desc()).filter(Quote.speaker == metadata['speaker']).all()
     else:
-        quotes = Quote.query.order_by(Quote.quoteTime.desc()).limit(20).all()  # collect all quote rows in the Quote db
+        quotes = Quote.query.order_by(Quote.quote_time.desc()).limit(20).all()  # collect all quote rows in the Quote db
 
     if request.cookies.get('flag'):
         return render_template('flag/storage.html', quotes=quotes, metadata=metadata)
@@ -187,7 +187,7 @@ def get():
 @app.route('/additional', methods=['GET'])
 @auth.oidc_auth
 def additional_quotes():
-    quotes = Quote.query.order_by(Quote.quoteTime.desc()).all()  # collect all quote rows in the Quote db
+    quotes = Quote.query.order_by(Quote.quote_time.desc()).all()  # collect all quote rows in the Quote db
     metadata = get_metadata()
     if request.cookies.get('flag'):
         return render_template('flag/additional_quotes.html', quotes=quotes[20:], metadata=metadata)
