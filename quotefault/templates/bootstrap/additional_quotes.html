@@ -1,7 +1,7 @@
 {% for quote in quotes %}
     <div class="card m-3">
         <div class="card-body">
-            {{ quote.quote }} <b>- {{ get_display_name(quote.speaker) }}</b>
+            "{{ quote.quote }}" <b>- {{ get_display_name(quote.speaker) }}</b>
         </div>
         <div class="card-footer">
             Submitted by <a

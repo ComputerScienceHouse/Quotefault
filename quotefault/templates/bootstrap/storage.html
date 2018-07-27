@@ -17,7 +17,7 @@
 
             <div class="card m-3">
                 <div class="card-body">
-                    {{ quote.quote }} <b>- {{ get_display_name(quote.speaker) }}</b>
+                    "{{ quote.quote }}" <b>- {{ get_display_name(quote.speaker) }}</b>
                 </div>
                 <div class="card-footer">
                     Submitted by <a href="https://profiles.csh.rit.edu/user/{{ quote.submitter }}">{{ get_display_name(quote.submitter) }}</a> on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}
