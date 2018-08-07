@@ -1,6 +1,6 @@
 <ul style="list-style: none">
     {% for quote in quotes %}
         <li>"{{ quote.quote }}" - {{ get_display_name(quote.speaker) }} Submitted
-            by {{ get_display_name(quote.submitter) }} on {{ quote.quoteTime.strftime('%Y-%m-%d %H:%M:%S') }}</li>
+            by {{ get_display_name(quote.submitter) }} on {{ quote.quote_time.strftime('%Y-%m-%d %H:%M:%S') }}</li>
     {% endfor %}
 </ul>
