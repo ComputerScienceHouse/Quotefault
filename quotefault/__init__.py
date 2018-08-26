@@ -37,11 +37,11 @@ from .ldap import get_all_members, ldap_get_member
 
 # create the quote table with all relevant columns
 class Quote(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    submitter = db.Column(db.String(80))
-    quote = db.Column(db.String(200), unique=True)
-    speaker = db.Column(db.String(50))
-    quote_time = db.Column(db.DateTime)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    submitter = db.Column(db.String(80), nullable=False)
+    quote = db.Column(db.String(200), unique=True, nullable=False)
+    speaker = db.Column(db.String(50), nullable=False)
+    quote_time = db.Column(db.DateTime, nullable=False)
 
     # initialize a row for the Quote table
     def __init__(self, submitter, quote, speaker):
@@ -116,12 +116,13 @@ def submit():
     all_members = get_all_members()
     quote = request.form['quoteString']
 
-    # standardises quotation marks to remove them
+    # standardises quotes and validates input
+    quote = quote.strip()
     if quote[0] == '"' or quote[0] == "'":
         quote = quote[1:]
     if quote[-1] == '"' or quote[-1] == "'":
         quote = quote[:-1]
-    quote = '"' + quote + '"'
+    quote = quote.strip()
 
     speaker = request.form['nameString']
     # check for quote duplicate
@@ -177,10 +178,17 @@ def get():
         quotes = Quote.query.order_by(Quote.quote_time.desc()).limit(20).all()  # collect all quote rows in the Quote db
 
     if request.cookies.get('flag'):
-        return render_template('flag/storage.html', quotes=quotes, metadata=metadata)
+        return render_template(
+            'flag/storage.html',
+            quotes=quotes,
+            metadata=metadata
+        )
     else:
-        return render_template('bootstrap/storage.html', quotes=quotes,
-                               metadata=metadata)
+        return render_template(
+            'bootstrap/storage.html',
+            quotes=quotes,
+            metadata=metadata
+        )
 
 
 # display stored quotes
@@ -190,7 +198,14 @@ def additional_quotes():
     quotes = Quote.query.order_by(Quote.quote_time.desc()).all()  # collect all quote rows in the Quote db
     metadata = get_metadata()
     if request.cookies.get('flag'):
-        return render_template('flag/additional_quotes.html', quotes=quotes[20:], metadata=metadata)
+        return render_template(
+            'flag/additional_quotes.html',
+            quotes=quotes[20:],
+            metadata=metadata
+        )
     else:
-        return render_template('bootstrap/additional_quotes.html', quotes=quotes[20:],
-                               metadata=metadata)
+        return render_template(
+            'bootstrap/additional_quotes.html',
+            quotes=quotes[20:],
+            metadata=metadata
+        )
