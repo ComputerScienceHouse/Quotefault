@@ -117,12 +117,7 @@ def submit():
     quote = request.form['quoteString']
 
     # standardises quotes and validates input
-    quote = quote.strip()
-    if quote[0] == '"' or quote[0] == "'":
-        quote = quote[1:]
-    if quote[-1] == '"' or quote[-1] == "'":
-        quote = quote[:-1]
-    quote = quote.strip()
+    quote = quote.strip("""'"\t\n """)
 
     speaker = request.form['nameString']
     # check for quote duplicate
