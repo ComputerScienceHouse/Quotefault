@@ -18,3 +18,5 @@ setuptools
 SQLAlchemy
 Werkzeug
 wheel
+smtplib
+os
