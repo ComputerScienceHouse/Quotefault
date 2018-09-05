@@ -20,3 +20,5 @@ OIDC_CLIENT_CONFIG = {
 # CSH_LDAP credentials
 LDAP_BIND_DN = os.environ.get("LDAP_BIND_DN", default="cn=quotefault,ou=Apps,dc=csh,dc=rit,dc=edu")
 LDAP_BIND_PW = os.environ.get("LDAP_BIND_PW", default=None)
+MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", default=None)
+MAIL_SERVER = os.environ.get("MAIL_SERVER", default=None)
