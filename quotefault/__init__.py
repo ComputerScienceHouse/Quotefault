@@ -143,7 +143,8 @@ def submit():
         # upload the quote
         db.session.commit()
         # Send email to person quoted
-        send_quote_notification_email(app, speaker)
+        if app.config['MAIL_SERVER'] != '':
+            send_quote_notification_email(app, speaker)
         # create a message to flash for successful submission
         flash('Submission Successful!')
         # return something to complete submission
