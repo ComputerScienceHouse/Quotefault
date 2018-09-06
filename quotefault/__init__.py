@@ -33,6 +33,7 @@ _ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
 app.secret_key = 'submission'  # allows message flashing, var not actually used
 
 from .ldap import get_all_members, ldap_get_member
+from .mail import send_quote_notification_email
 
 
 # create the quote table with all relevant columns
@@ -141,6 +142,8 @@ def submit():
         db.session.flush()
         # upload the quote
         db.session.commit()
+        # Send email to person quoted
+        send_quote_notification_email(app, speaker)
         # create a message to flash for successful submission
         flash('Submission Successful!')
         # return something to complete submission
