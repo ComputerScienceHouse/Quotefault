@@ -24,4 +24,4 @@ def send_quote_notification_email(app, user):
     subject = "You've been quoted"
     body = "Somebody quoted you in Quotefault!\n\n"
     body += "Check Quotefault to see what you were caught saying!"
-    send_email(toaddr, subject, body)
+    send_email(app, toaddr, subject, body)
