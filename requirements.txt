@@ -3,7 +3,7 @@ click
 csh_ldap>=2.0.2
 Flask
 Flask-Migrate
-Flask-pyoidc
+Flask-pyoidc==1.3.0
 Flask-Script
 Flask-SQLAlchemy
 gunicorn
