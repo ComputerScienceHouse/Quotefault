@@ -8,6 +8,7 @@ from csh_ldap import CSHLDAP
 from flask import Flask, render_template, request, flash, session, make_response
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 
 app = Flask(__name__)
 # look for a config file to associate with a db/port/ip/servername
@@ -52,6 +53,24 @@ class Quote(db.Model):
         self.speaker = speaker
 
 
+class Vote(db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    quote_id = db.Column(db.ForeignKey("quote.id"))
+    voter = db.Column(db.String(200), nullable=False)
+    direction = db.Column(db.Integer, nullable=False)
+    updated_time = db.Column(db.DateTime, nullable=False)
+
+    quote = db.relationship(Quote)
+    test = db.UniqueConstraint("quote_id", "voter")
+
+    # initialize a row for the Vote table
+    def __init__(self, quote_id, voter, direction):
+        self.quote_id = quote_id
+        self.voter = voter
+        self.direction = direction
+        self.updated_time = datetime.now()
+
+
 def get_metadata():
     uuid = str(session["userinfo"].get("sub", ""))
     uid = str(session["userinfo"].get("preferred_username", ""))
@@ -87,6 +106,30 @@ def settings():
         return render_template('flag/settings.html', metadata=metadata)
     else:
         return render_template('bootstrap/settings.html', metadata=metadata)
+
+
+@app.route('/vote', methods=['POST'])
+@auth.oidc_auth
+def make_vote():
+    # submitter will grab UN from OIDC when linked to it
+    submitter = session['userinfo'].get('preferred_username', '')
+
+    quote = request.form['quote_id']
+    direction = request.form['direction']
+
+    existing_vote = Vote.query.filter_by(voter=submitter, quote_id=quote).first()
+    if existing_vote is None:
+        vote = Vote(quote, submitter, direction)
+        db.session.add(vote)
+        db.session.commit()
+        return '200'
+    elif existing_vote.direction != direction:
+        existing_vote.direction = direction
+        existing_vote.updated_time = datetime.now()
+        db.session.commit()
+        return '200'
+    else:
+        return '201'
 
 
 @app.route('/settings', methods=['POST'])
@@ -164,7 +207,7 @@ def submit():
 def get():
     metadata = get_metadata()
     metadata['submitter'] = request.args.get('submitter')  # get submitter from url query string
-    metadata['speaker'] = request.args.get('speaker')  # get submitter from url query string
+    metadata['speaker'] = request.args.get('speaker')  # get speaker from url query string
 
     if metadata['speaker'] is not None and metadata['submitter'] is not None:
         quotes = Quote.query.order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter'],
@@ -174,19 +217,27 @@ def get():
     elif metadata['speaker'] is not None:
         quotes = Quote.query.order_by(Quote.quote_time.desc()).filter(Quote.speaker == metadata['speaker']).all()
     else:
-        quotes = Quote.query.order_by(Quote.quote_time.desc()).limit(20).all()  # collect all quote rows in the Quote db
+        # quotes = Quote.query.order_by(Quote.quote_time.desc()).limit(20).all()
+
+        # returns tuples with a quote and its net vote value
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(
+            Quote.quote_time.desc()).limit(20).all()
+
+        user_votes = db.session.query(Vote).filter(Vote.voter == metadata['submitter']).all()
 
     if request.cookies.get('flag'):
         return render_template(
             'flag/storage.html',
             quotes=quotes,
-            metadata=metadata
+            metadata=metadata,
+            user_votes=user_votes
         )
     else:
         return render_template(
             'bootstrap/storage.html',
             quotes=quotes,
-            metadata=metadata
+            metadata=metadata,
+            user_votes=user_votes
         )
 
 
