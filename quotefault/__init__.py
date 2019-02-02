@@ -217,6 +217,7 @@ def get():
     elif metadata['speaker'] is not None:
         quotes = Quote.query.order_by(Quote.quote_time.desc()).filter(Quote.speaker == metadata['speaker']).all()
     else:
+        # collect all quote rows in the Quote db
         # quotes = Quote.query.order_by(Quote.quote_time.desc()).limit(20).all()
 
         # returns tuples with a quote and its net vote value
@@ -245,17 +246,26 @@ def get():
 @app.route('/additional', methods=['GET'])
 @auth.oidc_auth
 def additional_quotes():
-    quotes = Quote.query.order_by(Quote.quote_time.desc()).all()  # collect all quote rows in the Quote db
+
     metadata = get_metadata()
+
+    # returns tuples with a quote and its net vote value
+    quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(
+        Quote.quote_time.desc()).all()
+
+    user_votes = db.session.query(Vote).filter(Vote.voter == metadata['uid']).all()
+
     if request.cookies.get('flag'):
         return render_template(
             'flag/additional_quotes.html',
             quotes=quotes[20:],
-            metadata=metadata
+            metadata=metadata,
+            user_votes=user_votes
         )
     else:
         return render_template(
             'bootstrap/additional_quotes.html',
             quotes=quotes[20:],
-            metadata=metadata
+            metadata=metadata,
+            user_votes=user_votes
         )
