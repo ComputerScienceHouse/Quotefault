@@ -3,7 +3,7 @@
         <div class="card-body">
             "{{ quote.quote }}" <b>- {{ get_display_name(quote.speaker) }}</b>
             <div id="votes-{{ quote.id }}" class="upvote upvote-meta-stackoverflow">
-                <a href="#" class="upvote" id="upVote-{{ quote.id }}" onClick="makeVote({{ quote.id }}, 1)">
+                <a class="upvote" id="upVote-{{ quote.id }}" onClick="makeVote({{ quote.id }}, 1)">
                 </a>
                 <span class="count">
                     {% if votes %}
@@ -12,7 +12,7 @@
                         0
                     {% endif %}
                 </span>
-                <a href="#" class="downvote" id="downVote-{{ quote.id }}"
+                <a class="downvote" id="downVote-{{ quote.id }}"
                    onClick="makeVote({{ quote.id }}, -1)">
                 </a>
             </div>
