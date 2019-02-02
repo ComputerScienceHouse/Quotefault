@@ -313,3 +313,9 @@ div.version{
 #get_more {
   width: 100%;
 }
+
+.upvote-meta-stackoverflow{
+    text-align: right;
+    float: right;
+    justify-content: right;
+}

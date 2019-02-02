@@ -1,7 +1,12 @@
 {% extends "bootstrap/base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/static/css/votes/upvote.css">
+{% endblock %}
+
 {% block body %}
     <div class="container">
-        {% for quote in quotes %}
+        {% for quote, votes in quotes %}
             {% if loop.index0 == 0 and config['PLUG'] == True and metadata.plug != 'False' %}
                 <div class="card my-3">
                     <div class="card-body">
@@ -16,8 +21,23 @@
             {% endif %}
 
             <div class="card m-3">
+
                 <div class="card-body">
                     "{{ quote.quote }}" <b>- {{ get_display_name(quote.speaker) }}</b>
+                    <div id="votes-{{ quote.id }}" class="upvote upvote-meta-stackoverflow">
+                        <a href="#" class="upvote" id="upVote-{{ quote.id }}" onClick="makeVote({{ quote.id }}, 1)">
+                        </a>
+                        <span class="count">
+                            {% if votes %}
+                                {{ votes }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </span>
+                        <a href="#" class="downvote" id="downVote-{{ quote.id }}"
+                           onClick="makeVote({{ quote.id }}, -1)">
+                        </a>
+                    </div>
                 </div>
                 <div class="card-footer">
                     Submitted by <a href="https://profiles.csh.rit.edu/user/{{ quote.submitter }}">{{ get_display_name(quote.submitter) }}</a> on {{ quote.quote_time.strftime('%Y-%m-%d %H:%M:%S') }}
@@ -35,4 +55,6 @@
 
 {% block scripts %}
     <script src="{{ url_for('static', filename='js/load_more.js') }}"></script>
+    <script src="{{ url_for('static', filename='css/votes/upvote.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vote.js') }}"></script>
 {% endblock %}
