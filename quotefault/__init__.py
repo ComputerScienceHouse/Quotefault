@@ -16,6 +16,7 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
 else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
+#var representing the quote database the app is connected to
 db = SQLAlchemy(app)
 
 # Disable SSL certificate verification warning
@@ -92,20 +93,14 @@ def main():
     db.create_all()
     metadata = get_metadata()
     all_members = get_all_members()
-    if request.cookies.get('flag'):
-        return render_template('flag/main.html', metadata=metadata)
-    else:
-        return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members)
+    return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members)
 
 
 @app.route('/settings', methods=['GET'])
 @auth.oidc_auth
 def settings():
     metadata = get_metadata()
-    if request.cookies.get('flag'):
-        return render_template('flag/settings.html', metadata=metadata)
-    else:
-        return render_template('bootstrap/settings.html', metadata=metadata)
+    return render_template('bootstrap/settings.html', metadata=metadata)
 
 
 @app.route('/vote', methods=['POST'])
@@ -136,18 +131,12 @@ def make_vote():
 @auth.oidc_auth
 def update_settings():
     metadata = get_metadata()
-    if request.form['template'] == "flag":
-        resp = make_response(render_template('flag/settings.html', metadata=metadata))
-        resp.set_cookie('flag', 'True')
-        return resp
+    resp = make_response(render_template('bootstrap/settings.html', metadata=metadata))
+    if request.form['plug'] == "off":
+        resp.set_cookie('plug', 'False')
     else:
-        resp = make_response(render_template('bootstrap/settings.html', metadata=metadata))
-        resp.set_cookie('flag', 'False', expires=0)
-        if request.form['plug'] == "off":
-            resp.set_cookie('plug', 'False')
-        else:
-            resp.set_cookie('plug', 'True', expires=0)
-        return resp
+        resp.set_cookie('plug', 'True', expires=0)
+    return resp
 
 
 # run when the form submission button is clicked
@@ -170,13 +159,9 @@ def submit():
     # checks for empty quote or submitter
     if quote == '' or speaker == '':
         flash('Empty quote or speaker field, try again!', 'error')
-        if request.cookies.get('flag'):
-            return render_template('flag/main.html', metadata=metadata), 200
         return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
     elif submitter == speaker:
         flash('You can\'t quote yourself! Come on', 'error')
-        if request.cookies.get('flag'):
-            return render_template('flag/main.html', metadata=metadata), 200
         return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
     elif quoteCheck is None:  # no duplicate quotes, proceed with submission
         # create a row for the Quote table
@@ -191,17 +176,13 @@ def submit():
         # create a message to flash for successful submission
         flash('Submission Successful!')
         # return something to complete submission
-        if request.cookies.get('flag'):
-            return render_template('flag/main.html', metadata=metadata), 200
         return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
     else:  # duplicate quote found, bounce the user back to square one
         flash('Quote already submitted!', 'warning')
-        if request.cookies.get('flag'):
-            return render_template('flag/main.html', metadata=metadata), 200
         return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
 
 
-# display stored quotes
+# display first 20 stored quotes
 @app.route('/storage', methods=['GET'])
 @auth.oidc_auth
 def get():
@@ -209,63 +190,53 @@ def get():
     metadata['submitter'] = request.args.get('submitter')  # get submitter from url query string
     metadata['speaker'] = request.args.get('speaker')  # get speaker from url query string
 
+    #return the first 20 quotes according to query strings (or lack thereof), as well as their associated vote value
     if metadata['speaker'] is not None and metadata['submitter'] is not None:
-        quotes = Quote.query.order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter'],
-                                                                     Quote.speaker == metadata['speaker']).all()
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter'], Quote.speaker == metadata['speaker']).limit(20).all()
     elif metadata['submitter'] is not None:
-        quotes = Quote.query.order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter']).all()
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter']).limit(20).all()
     elif metadata['speaker'] is not None:
-        quotes = Quote.query.order_by(Quote.quote_time.desc()).filter(Quote.speaker == metadata['speaker']).all()
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.speaker == metadata['speaker']).limit(20).all()
     else:
-        # collect all quote rows in the Quote db
-        # quotes = Quote.query.order_by(Quote.quote_time.desc()).limit(20).all()
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).limit(20).all()
+    
+    #tie any votes the user has made to their uid
+    user_votes = db.session.query(Vote).filter(Vote.voter == metadata['submitter']).all()
 
-        # returns tuples with a quote and its net vote value
-        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(
-            Quote.quote_time.desc()).limit(20).all()
-
-        user_votes = db.session.query(Vote).filter(Vote.voter == metadata['submitter']).all()
-
-    if request.cookies.get('flag'):
-        return render_template(
-            'flag/storage.html',
-            quotes=quotes,
-            metadata=metadata,
-            user_votes=user_votes
-        )
-    else:
-        return render_template(
-            'bootstrap/storage.html',
-            quotes=quotes,
-            metadata=metadata,
-            user_votes=user_votes
-        )
+    return render_template(
+        'bootstrap/storage.html',
+        quotes=quotes,
+        metadata=metadata,
+        user_votes=user_votes
+    )
 
 
-# display stored quotes
+# display ALL stored quotes
 @app.route('/additional', methods=['GET'])
 @auth.oidc_auth
 def additional_quotes():
 
     metadata = get_metadata()
+    metadata['submitter'] = request.args.get('submitter')  # get submitter from url query string
+    metadata['speaker'] = request.args.get('speaker')  # get speaker from url query string
 
-    # returns tuples with a quote and its net vote value
-    quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(
-        Quote.quote_time.desc()).all()
+    #return quotes according to query strings (or lack thereof)
+    if metadata['speaker'] is not None and metadata['submitter'] is not None:
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter'], Quote.speaker == metadata['speaker']).all()
+    elif metadata['submitter'] is not None:
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter']).all()
+    elif metadata['speaker'] is not None:
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.speaker == metadata['speaker']).all()
+    else:
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).all()
 
+    #tie any votes the user has made to their uid
     user_votes = db.session.query(Vote).filter(Vote.voter == metadata['uid']).all()
 
-    if request.cookies.get('flag'):
-        return render_template(
-            'flag/additional_quotes.html',
-            quotes=quotes[20:],
-            metadata=metadata,
-            user_votes=user_votes
-        )
-    else:
-        return render_template(
-            'bootstrap/additional_quotes.html',
-            quotes=quotes[20:],
-            metadata=metadata,
-            user_votes=user_votes
-        )
+
+    return render_template(
+        'bootstrap/additional_quotes.html',
+        quotes=quotes[20:],
+        metadata=metadata,
+        user_votes=user_votes
+    )
