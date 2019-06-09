@@ -42,10 +42,10 @@ $(function () {
         let submitter = urlParams.get('submitter');
         let urlStr = `/additional`;
         if(speaker){
-            urlStr+=`${speaker}`;
+            urlStr+=`?speaker=${speaker}`;
         }
         if(submitter){
-            urlStr+=`${submitter}`;
+            urlStr+=`?submitter=${submitter}`;
         }
         buttonAjax($(this), {
             url: urlStr,
