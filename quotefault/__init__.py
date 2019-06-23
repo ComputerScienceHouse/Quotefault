@@ -189,9 +189,12 @@ def get():
     metadata = get_metadata()
     metadata['submitter'] = request.args.get('submitter')  # get submitter from url query string
     metadata['speaker'] = request.args.get('speaker')  # get speaker from url query string
+    metadata['id'] = request.args.get('id') # get id from url query string
 
-    #return the first 20 quotes according to query strings (or lack thereof), as well as their associated vote value
-    if metadata['speaker'] is not None and metadata['submitter'] is not None:
+    # return the first 20 quotes according to query strings (or lack thereof), as well as their associated vote value
+    if metadata['id'] is not None: # special case of an id being specified, ignore all other fields
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).filter(Quote.id == metadata['id'])
+    elif metadata['speaker'] is not None and metadata['submitter'] is not None:
         quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter'], Quote.speaker == metadata['speaker']).limit(20).all()
     elif metadata['submitter'] is not None:
         quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter']).limit(20).all()
@@ -200,7 +203,7 @@ def get():
     else:
         quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).limit(20).all()
     
-    #tie any votes the user has made to their uid
+    # tie any votes the user has made to their uid
     user_votes = db.session.query(Vote).filter(Vote.voter == metadata['submitter']).all()
 
     return render_template(
@@ -219,9 +222,12 @@ def additional_quotes():
     metadata = get_metadata()
     metadata['submitter'] = request.args.get('submitter')  # get submitter from url query string
     metadata['speaker'] = request.args.get('speaker')  # get speaker from url query string
+    metadata['id'] = request.args.get('id') # get id from url query string
 
-    #return quotes according to query strings (or lack thereof)
-    if metadata['speaker'] is not None and metadata['submitter'] is not None:
+    # return the first 20 quotes according to query strings (or lack thereof), as well as their associated vote value
+    if metadata['id'] is not None: # special case of an id being specified, ignore all other fields
+        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).filter(Quote.id == metadata['id'])
+    elif metadata['speaker'] is not None and metadata['submitter'] is not None:
         quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter'], Quote.speaker == metadata['speaker']).all()
     elif metadata['submitter'] is not None:
         quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter']).all()

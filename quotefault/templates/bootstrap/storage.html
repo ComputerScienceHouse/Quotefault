@@ -24,6 +24,7 @@
 
                 <div class="card-body">
                     "{{ quote.quote }}" <b>- {{ get_display_name(quote.speaker) }}</b>
+                    <button onClick="navigator.clipboard.writeText('quotefault.csh.rit.edu/storage?id={{quote.id}}')"><i class="fas fa-link"></i></button>
                     <div id="votes-{{ quote.id }}" class="upvote upvote-meta-stackoverflow">
                         <a class="upvote" id="upVote-{{ quote.id }}" onClick="makeVote({{ quote.id }}, 1)">
                         </a>
