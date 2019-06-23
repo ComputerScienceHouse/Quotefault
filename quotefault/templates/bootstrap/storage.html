@@ -44,12 +44,10 @@
                 </div>
             </div>
         {% endfor %}
-        {% if metadata['submitter'] == None and metadata['speaker'] == None %}
-            <button href="#moreQuotes" id="get_more" data-toggle="collapse" class="btn btn-default center-block">But wait, there's more!</button>
-            <br>
-            <div id="moreQuotes" class="collapse" aria-expanded="false">
-            </div>
-        {% endif %}
+        <button href="#moreQuotes" id="get_more" data-toggle="collapse" class="btn btn-default center-block">But wait, there's more!</button>
+        <br>
+        <div id="moreQuotes" class="collapse" aria-expanded="false">
+        </div>
     </div>
 {% endblock %}
 

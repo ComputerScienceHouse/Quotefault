@@ -36,8 +36,19 @@ function buttonAjax(buttonElem, options, failOnly) {
 
 $(function () {
     $("#get_more").one("click", function (e) {
+        //Prepare the url with the proper query strings
+        let urlParams = new URLSearchParams(window.location.search);
+        let speaker = urlParams.get('speaker');
+        let submitter = urlParams.get('submitter');
+        let urlStr = `/additional`;
+        if(speaker){
+            urlStr+=`?speaker=${speaker}`;
+        }
+        if(submitter){
+            urlStr+=`?submitter=${submitter}`;
+        }
         buttonAjax($(this), {
-            url: '/additional',
+            url: urlStr,
             method: 'GET',
             success: function (data, textStatus, jqXHR) {
                 $("#moreQuotes").html(data)
