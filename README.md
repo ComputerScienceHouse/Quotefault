@@ -1,14 +1,23 @@
-# quotefault
-quote-submission system for CSH Segfault editors as well as CSH InfoSys
+# Quotefault
+Quote-submission system for members of CSH.  Utilizes a CSH Bootsrap framework for the front-end webpages and a Flask app backend to send/retrieve quotes in a MySQL database.
 
-Intial (Hackathon 1/14/17) goals:
-Allow users to access the QuoteFault Main page and submit a quote and name to the system; Have flask/mySQL utilities collect the two pieces of user input, as well as a datetime stamp and store them; Display the data collected on a seperate, password-protected page in date-submitted order for Segfault editors to view
+## Dev Setup
+This project is built in Python 3, and all of its dependencies are accesible via pip.  **Before getting started, please be aware that the LDAP dependency has been known to have issues on Windows operating systems, and it is HIGHLY reccomended that you work on a distribution of the Linux operating system to circumvent this problem.**
 
-Long-term goals:
-Allow InfoSys to access the database and take one quote a day and display it in the user-center once per hour; Allow Segfault editors to delete old/used quotes from the database at any time; Appearance improvements
+### Installing Python
+[This guide](https://docs.python-guide.org/starting/installation/#installation-guides) should cover installing python
+then you need to make sure you [have pip installed](https://packaging.python.org/tutorials/installing-packages/#ensure-you-can-run-pip-from-the-command-line).
 
-(2/12/17):
-Submission now updates a MySQL server hosted by CSH, grabbing csh username, quote and name form strings, and datetime as it goes.  Second /get page is coded to retrieve rows from the MySQL server, and will eventually display them for general user consumption (upon discussion with members of floor, I think I'll have this page be open to everyone in a non-editable state, and just use the CSH MySQL viewer to allow Quotefault editors to remove quotes from the db).  Next step is to learn the nencesary Jinja to implement this properly, and create a button that'll redirect to it from the main page.
+### Recommended setup
+From inside your repository directory run
+```
+python -m virtualenv venv # Sets up virtualenve in the venv directory in your working directory
+source venv/bin/activate # Activates the virtual environment
+pip install -r requirements.txt # Installs all of the dependencies listed in the requirements to the virtualenv
+```
 
-Opcommathon (2/19/17):
-Site functions locally.  Submission now catches repeat quotes before throwing a 500 error.  CSS updated to make both templates more visually appealing, a blend of CSH bootstrap and personal work.  Links inserted to both templates so users can easily jump between the two pages.
+### Accessing the DB locally
+At this point all the dependencies are installed, so the next step would be to copy `config.env.py` to `config.py` and fill in fields (you probably also need to set `SERVER_NAME = 127.0.0.1:5000`, which is where flask will put local applications).  Since we can't freely distribute the keys for the config file, there's a few options available to access the database.  The first is to simply contact any CSH RTP or Webmaster for the keys; if they approve you can proceed with the original course of action to get your local dev up and running (just make sure you aren't putting those keys back up publicly when you push!).  Alternatively, they could ask you to make a branch on this repo so they could make a dev instance online that you could then access to see your changes.  Finally, you could make your own MySQL database with test data to work off of.  For this, usage of a [Docker](https://www.docker.com/get-started) container is reccomended (MySQL specific docs can be found [here](https://docs.docker.com/samples/library/mysql/)).  To learn more about MySQL, check [this link](https://dev.mysql.com/doc/mysql-getting-started/en/), and to format your table so it mimics ours simply refer to the init.py file for all the necessary columns.
+
+### Running the app
+All that's left is running it with `flask run`. Flask should automatically find `app.py`, though you may want to set debug mode with `export FLASK_ENV=development` before you run it.
