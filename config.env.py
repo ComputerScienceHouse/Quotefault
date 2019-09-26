@@ -17,6 +17,9 @@ OIDC_CLIENT_CONFIG = {
     'post_logout_redirect_uris': [os.environ.get('QUOTEFAULT_OIDC_LOGOUT_REDIRECT_URI', 'https://quotefault.csh.rit.edu/logout')]
 }
 
+# May fix SQLAlchemy losing connection to the database 
+SQLALCHEMY_POOL_RECYCLE = 500
+
 # CSH_LDAP credentials
 LDAP_BIND_DN = os.environ.get("LDAP_BIND_DN", default="cn=quotefault,ou=Apps,dc=csh,dc=rit,dc=edu")
 LDAP_BIND_PW = os.environ.get("LDAP_BIND_PW", default=None)
