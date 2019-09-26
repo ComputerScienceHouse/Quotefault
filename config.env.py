@@ -18,7 +18,7 @@ OIDC_CLIENT_CONFIG = {
 }
 
 # May fix SQLAlchemy losing connection to the database 
-SQLALCHEMY_POOL_RECYCLE = 500
+SQLALCHEMY_POOL_RECYCLE = os.environ.get("SQLALCHEMY_POOL_RECYCLE", default=500)
 
 # CSH_LDAP credentials
 LDAP_BIND_DN = os.environ.get("LDAP_BIND_DN", default="cn=quotefault,ou=Apps,dc=csh,dc=rit,dc=edu")
