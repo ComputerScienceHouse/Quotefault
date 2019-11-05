@@ -175,6 +175,11 @@ def submit():
             send_quote_notification_email(app, speaker)
         # create a message to flash for successful submission
         flash('Submission Successful!')
+        # add quote to CSH quote jar via QuoteJar API
+        url = 'https://api.quote-jar.com/quotes/jar/32'
+        body = {"quote": quote, "quotee": speaker}
+        headers = {'content-type': 'application/json', 'token': app.config['QUOTEJAR_AUTH_KEY']}
+        requests.post(url, data=json.dumps(body), headers=headers)
         # return something to complete submission
         return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
     else:  # duplicate quote found, bounce the user back to square one
