@@ -8,11 +8,16 @@ from quotefault import db
 
 # create the quote table with all relevant columns
 class Quote(db.Model):
+    __tablename__ = 'quote'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     submitter = db.Column(db.String(80), nullable=False)
     quote = db.Column(db.String(200), unique=True, nullable=False)
     speaker = db.Column(db.String(50), nullable=False)
     quote_time = db.Column(db.DateTime, nullable=False)
+    hidden = db.Column(db.Boolean, default=False)
+
+    votes = db.relationship('Vote', back_populates='quote_id')
+    reports = db.relationship('Report', back_populates='quote_id')
 
     # initialize a row for the Quote table
     def __init__(self, submitter, quote, speaker):
@@ -23,13 +28,14 @@ class Quote(db.Model):
 
 
 class Vote(db.Model):
+    __tablename__ = 'vote'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     quote_id = db.Column(db.ForeignKey("quote.id"))
     voter = db.Column(db.String(200), nullable=False)
     direction = db.Column(db.Integer, nullable=False)
     updated_time = db.Column(db.DateTime, nullable=False)
 
-    quote = db.relationship(Quote)
+    quote = db.relationship(Quote, back_populates='votes')
     test = db.UniqueConstraint("quote_id", "voter")
 
     # initialize a row for the Vote table
@@ -41,6 +47,7 @@ class Vote(db.Model):
 
 
 class APIKey(db.Model):
+    __tablename__ = 'api_key'
     id = db.Column(db.Integer, primary_key=True)
     hash = db.Column(db.String(64), unique=True)
     owner = db.Column(db.String(80))
@@ -51,3 +58,12 @@ class APIKey(db.Model):
         self.hash = binascii.b2a_hex(os.urandom(10))
         self.owner = owner
         self.reason = reason
+
+class Report(db.Model):
+    __tablename__ = 'report'
+    id = db.Column(db.Integer, primary_key=True)
+    quote_id = db.Column(db.Integer, db.ForeignKey('quote.id'))
+    reporter = db.Column(db.Text, nullable=False)
+    reason = db.Column(db.Text, nullable=False)
+
+    quote = db.relationship(Quote, back_populates='reports')
