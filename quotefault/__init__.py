@@ -6,6 +6,7 @@ from datetime import datetime
 import requests
 from csh_ldap import CSHLDAP
 from flask import Flask, render_template, request, flash, session, make_response
+from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
@@ -16,8 +17,14 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
 else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
+
 #var representing the quote database the app is connected to
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+app.logger.info('SQLAlchemy pointed at ' + repr(db.engine.url))
+
+# pylint: disable=wrong-import-position
+from .models import Quote, Vote
 
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
@@ -36,40 +43,6 @@ app.secret_key = 'submission'  # allows message flashing, var not actually used
 
 from .ldap import get_all_members, ldap_get_member
 from .mail import send_quote_notification_email
-
-
-# create the quote table with all relevant columns
-class Quote(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    submitter = db.Column(db.String(80), nullable=False)
-    quote = db.Column(db.String(200), unique=True, nullable=False)
-    speaker = db.Column(db.String(50), nullable=False)
-    quote_time = db.Column(db.DateTime, nullable=False)
-
-    # initialize a row for the Quote table
-    def __init__(self, submitter, quote, speaker):
-        self.quote_time = datetime.now()
-        self.submitter = submitter
-        self.quote = quote
-        self.speaker = speaker
-
-
-class Vote(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    quote_id = db.Column(db.ForeignKey("quote.id"))
-    voter = db.Column(db.String(200), nullable=False)
-    direction = db.Column(db.Integer, nullable=False)
-    updated_time = db.Column(db.DateTime, nullable=False)
-
-    quote = db.relationship(Quote)
-    test = db.UniqueConstraint("quote_id", "voter")
-
-    # initialize a row for the Vote table
-    def __init__(self, quote_id, voter, direction):
-        self.quote_id = quote_id
-        self.voter = voter
-        self.direction = direction
-        self.updated_time = datetime.now()
 
 
 def get_metadata():
