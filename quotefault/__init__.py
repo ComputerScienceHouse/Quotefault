@@ -155,23 +155,33 @@ def submit():
         return render_template('bootstrap/main.html', metadata=metadata, all_members=all_members), 200
 
 
+def get_quote_query(speaker: str = "", submitter: str = "", include_hidden: bool = False):
+    """Return a query based on the args, with vote count attached to the quotes"""
+
+    # Get all the quotes with their votes
+    quote_query = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote)
+
+    # Put the most recent first
+    quote_query = quote_query.order_by(Quote.quote_time.desc())
+
+    # Filter hidden quotes
+    if not include_hidden:
+        quote_query = quote_query.filter(Quote.hidden == False)
+
+    # Filter by speaker and submitter, if applicable
+    if request.args.get('speaker'):
+        quote_query = quote_query.filter(Quote.speaker == request.args.get('speaker'))
+    if request.args.get('submitter'):
+        quote_query = quote_query.filter(Quote.submitter == request.args.get('submitter'))
+
+    return quote_query
+
 # display first 20 stored quotes
 @app.route('/storage', methods=['GET'])
 @auth.oidc_auth
 def get():
-    metadata = get_metadata()
-    metadata['submitter'] = request.args.get('submitter')  # get submitter from url query string
-    metadata['speaker'] = request.args.get('speaker')  # get speaker from url query string
-
-    #return the first 20 quotes according to query strings (or lack thereof), as well as their associated vote value
-    if metadata['speaker'] is not None and metadata['submitter'] is not None:
-        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter'], Quote.speaker == metadata['speaker']).limit(20).all()
-    elif metadata['submitter'] is not None:
-        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter']).limit(20).all()
-    elif metadata['speaker'] is not None:
-        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.speaker == metadata['speaker']).limit(20).all()
-    else:
-        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).limit(20).all()
+    # Get the most recent 20 quotes
+    quotes = get_quote_query(speaker = request.args.get('speaker'), submitter = request.args.get('submitter')).limit(20).all()
     
     #tie any votes the user has made to their uid
     user_votes = db.session.query(Vote).filter(Vote.voter == metadata['submitter']).all()
@@ -179,7 +189,7 @@ def get():
     return render_template(
         'bootstrap/storage.html',
         quotes=quotes,
-        metadata=metadata,
+        metadata=get_metadata(),
         user_votes=user_votes
     )
 
@@ -189,27 +199,15 @@ def get():
 @auth.oidc_auth
 def additional_quotes():
 
-    metadata = get_metadata()
-    metadata['submitter'] = request.args.get('submitter')  # get submitter from url query string
-    metadata['speaker'] = request.args.get('speaker')  # get speaker from url query string
-
-    #return quotes according to query strings (or lack thereof)
-    if metadata['speaker'] is not None and metadata['submitter'] is not None:
-        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter'], Quote.speaker == metadata['speaker']).all()
-    elif metadata['submitter'] is not None:
-        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.submitter == metadata['submitter']).all()
-    elif metadata['speaker'] is not None:
-        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).filter(Quote.speaker == metadata['speaker']).all()
-    else:
-        quotes = db.session.query(Quote, func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote).order_by(Quote.quote_time.desc()).all()
+    # Get all the quotes
+    quotes = get_quote_query(speaker = request.args.get('speaker'), submitter = request.args.get('submitter')).all()
 
     #tie any votes the user has made to their uid
     user_votes = db.session.query(Vote).filter(Vote.voter == metadata['uid']).all()
 
-
     return render_template(
         'bootstrap/additional_quotes.html',
         quotes=quotes[20:],
-        metadata=metadata,
+        metadata=get_metadata(),
         user_votes=user_votes
     )
