@@ -1,17 +1,17 @@
 """
 Defines the application's database models
 """
-
-from sqlalchemy import UniqueConstraint
-from sqlalchemy.sql.expression import nullslast
-
-from quotefault import db
+import binascii
 from datetime import datetime
 import os
-import binascii
+from sqlalchemy import UniqueConstraint
+from quotefault import db
 
 # create the quote table with all relevant columns
 class Quote(db.Model):
+    """
+    Quote table in SQL
+    """
     __tablename__ = 'quote'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     submitter = db.Column(db.String(80), nullable=False)
@@ -32,6 +32,9 @@ class Quote(db.Model):
 
 
 class Vote(db.Model):
+    """
+    Vote table in SQL
+    """
     __tablename__ = 'vote'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     quote_id = db.Column(db.ForeignKey("quote.id"))
@@ -51,6 +54,9 @@ class Vote(db.Model):
 
 
 class APIKey(db.Model):
+    """
+    APIKey table in SQL
+    """
     __tablename__ = 'api_key'
     id = db.Column(db.Integer, primary_key=True)
     hash = db.Column(db.String(64), unique=True)
@@ -64,6 +70,9 @@ class APIKey(db.Model):
         self.reason = reason
 
 class Report(db.Model):
+    """
+    Report table in SQL
+    """
     __tablename__ = 'report'
     id = db.Column(db.Integer, primary_key=True)
     quote_id = db.Column(db.Integer, db.ForeignKey('quote.id'), nullable=False)
