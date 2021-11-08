@@ -3,8 +3,12 @@ Defines the application's database models
 """
 
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.sql.expression import nullslast
 
 from quotefault import db
+from datetime import datetime
+import os
+import binascii
 
 # create the quote table with all relevant columns
 class Quote(db.Model):
@@ -16,8 +20,8 @@ class Quote(db.Model):
     quote_time = db.Column(db.DateTime, nullable=False)
     hidden = db.Column(db.Boolean, default=False)
 
-    votes = db.relationship('Vote', back_populates='quote_id')
-    reports = db.relationship('Report', back_populates='quote_id')
+    votes = db.relationship('Vote', back_populates='quote')
+    reports = db.relationship('Report', back_populates='quote')
 
     # initialize a row for the Quote table
     def __init__(self, submitter, quote, speaker):
@@ -62,8 +66,15 @@ class APIKey(db.Model):
 class Report(db.Model):
     __tablename__ = 'report'
     id = db.Column(db.Integer, primary_key=True)
-    quote_id = db.Column(db.Integer, db.ForeignKey('quote.id'))
+    quote_id = db.Column(db.Integer, db.ForeignKey('quote.id'), nullable=False)
     reporter = db.Column(db.Text, nullable=False)
-    reason = db.Column(db.Text, nullable=False)
+    reason = db.Column(db.Text, nullable=True)
+    reviewed = db.Column(db.Boolean, nullable=False, default=False)
 
     quote = db.relationship(Quote, back_populates='reports')
+
+    def __init__(self, quote_id, reporter, reason):
+        self.hash = binascii.b2a_hex(os.urandom(10))
+        self.quote_id = quote_id
+        self.reporter = reporter
+        self.reason = reason

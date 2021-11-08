@@ -1,10 +1,22 @@
+from flask_mail import Message
+from flask import render_template
 import smtplib
 import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+def send_report_email(app, mail_client, reporter, quote):
+    recipients = ["<eboard@csh.rit.edu>","<rtp@csh.rit.edu>"]
+    msg = Message(subject='New QuoteFault Report',
+                sender=app.config.get('MAIL_USERNAME'),
+                recipients=recipients)
+    template = 'mail/report'
+    msg.body = render_template(template + '.txt', reporter = reporter, quote = quote )
+    msg.html = render_template(template + '.html', reporter = reporter, quote = quote )
+    mail_client.send(msg)
+
 def send_email(app, toaddr, subject, body):
-    fromaddr = "quotefault@csh.rit.edu"
+    fromaddr = app.config['MAIL_USERNAME']
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
@@ -17,7 +29,6 @@ def send_email(app, toaddr, subject, body):
     text = msg.as_string()
     server.sendmail(fromaddr, toaddr, text)
     server.quit()
-
 
 def send_quote_notification_email(app, user):
     toaddr = "{}@csh.rit.edu".format(user)
