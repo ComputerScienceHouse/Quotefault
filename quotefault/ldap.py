@@ -42,7 +42,7 @@ def utility_processor():
 
 def is_member_of_group(uid: str, group: str) -> bool:
     """
-    Determine if user is member of OIDC group
+    Determine if user is member of LDAP group
     """
     member = ldap_get_member(uid)
     group_list = member.get("memberOf")
