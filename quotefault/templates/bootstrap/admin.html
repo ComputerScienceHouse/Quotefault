@@ -36,10 +36,10 @@
                 </div>
                 <div class="card-footer">
                     Submitted by <a href="https://profiles.csh.rit.edu/user/{{ report.quote.submitter }}">{{ get_display_name(report.quote.submitter) }}</a> on {{ report.quote.quote_time.strftime('%Y-%m-%d %H:%M:%S') }}
-                    <form method="POST" action="/review/{{report.id}}/0" id="hide::{{report.id}}" method="POST">
+                    <form method="POST" action="/review/{{report.id}}/hide" id="hide::{{report.id}}" method="POST">
                         <button type="submit" class="btn btn-danger float-right">Hide</button>
                     </form>
-                    <form method="POST" action="/review/{{report.id}}/1" id="keep::{{report.id}}" method="POST">
+                    <form method="POST" action="/review/{{report.id}}/keep" id="keep::{{report.id}}" method="POST">
                         <button type="submit" class="btn btn-success float-right">Keep</button>
                     </form>
                 </div>

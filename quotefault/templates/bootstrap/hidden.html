@@ -39,7 +39,7 @@
             {% endif %}
         {% endwith %}
         
-        {% for quote in quotes %}
+        {% for quote, votes in quotes %}
             {% if loop.index0 == 0 and config['PLUG'] == True and metadata.plug != 'False' %}
                 <div class="card my-3">
                     <div class="card-body">

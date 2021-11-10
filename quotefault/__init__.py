@@ -8,16 +8,12 @@ import subprocess
 from datetime import datetime
 
 import requests
-from csh_ldap import CSHLDAP
-from flask import Flask, render_template, request, flash, session, make_response
+from flask import Flask, render_template, request, flash, session, make_response, abort
 from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
-from sqlalchemy.orm.query import Query
 from werkzeug.utils import redirect
-
-from config import LDAP_BIND_DN
 
 app = Flask(__name__)
 # look for a config file to associate with a db/port/ip/servername
@@ -68,7 +64,6 @@ def get_metadata():
     }
     return metadata
 
-# run the main page by creating the table(s)
 # in the CSH serverspace and rendering the mainpage template
 @app.route('/', methods=['GET'])
 @auth.oidc_auth
@@ -259,24 +254,23 @@ def additional_quotes():
         user_votes=user_votes
     )
 
-@app.route('/report/<report_id>', methods=['POST'])
+@app.route('/report/<quote_id>', methods=['POST'])
 @auth.oidc_auth
-def submit_report(report_id):
+def submit_report(quote_id):
     """
     Report a quote and notify EBoard/RTP
     """
     metadata = get_metadata()
     existing_report = Report.query.filter(Report.reporter==metadata['uid'],
-        Report.quote_id==report_id).first()
+        Report.quote_id==quote_id).first()
     if existing_report:
         flash("You already submitted a report for this Quote!")
         return redirect('/storage')
-    new_report = Report(report_id, metadata['uid'], None)
+    new_report = Report(quote_id, metadata['uid'], None)
     db.session.add(new_report)
     db.session.commit()
     if app.config['MAIL_SERVER'] != '':
-        send_report_email( metadata['uid'], Quote.query.get(report_id) )
-
+        send_report_email( metadata['uid'], Quote.query.get(quote_id) )
     flash("Report Successful!")
     return redirect('/storage')
 
@@ -288,7 +282,7 @@ def review():
     and either hide or keep quote
     """
     metadata = get_metadata()
-    if metadata['is_admin']:
+    if metadata['is_admin']:  
         # Get the most recent 20 quotes
         reports = Report.query.filter(Report.reviewed == False).all()
 
@@ -297,7 +291,7 @@ def review():
             reports=reports,
             metadata=metadata
         )
-    return redirect('/')
+    abort(403)
 
 @app.route('/review/<report_id>/<result>', methods=['POST'])
 @auth.oidc_auth
@@ -306,53 +300,60 @@ def review_submit(report_id, result):
     Called when Admin decides on a quote being hidden or kept
     """
     metadata = get_metadata()
-    result = int(result)
-    if metadata['is_admin']:
-        # 1 = Keep, 0 = Hide
-        if result:
-            report = Report.query.get(report_id)
+    report = Report.query.get(report_id)
+    if report and metadata['is_admin']:
+        if result == "keep": 
             report.reviewed = True
             db.session.commit()
             flash("Report Completed: Quote Kept")
-        else:
-            report = Report.query.get(report_id)
+        elif result == "hide":
             report.quote.hidden = True
             report.reviewed = True
             db.session.commit()
             flash("Report Completed: Quote Hidden")
+        else:
+            abort(400)
         return redirect('/review')
-    return redirect('/')
+    elif report:
+        abort(403)
+    abort(400)
+    
 
-@app.route('/hide/<report_id>', methods=['POST'])
+@app.route('/hide/<quote_id>', methods=['POST'])
 @auth.oidc_auth
-def hide(report_id):
+def hide(quote_id):
     """
     Hides a quote
     """
     metadata = get_metadata()
-    quote = Quote.query.get(report_id)
-    if ( metadata['uid'] == quote.speaker
+    quote = Quote.query.get(quote_id)
+    if quote and ( metadata['uid'] == quote.speaker
         or metadata['uid'] == quote.submitter
         or metadata['is_admin'] ):
         quote.hidden = True
         db.session.commit()
         flash("Quote Hidden!")
-    return redirect('/storage')
+        return redirect('/storage')
+    elif quote:
+        abort(403)
+    abort(400)
 
-@app.route('/unhide/<report_id>', methods=['POST'])
+@app.route('/unhide/<quote_id>', methods=['POST'])
 @auth.oidc_auth
-def unhide(report_id):
+def unhide(quote_id):
     """
     Gives admins power to unhide a hidden quote
     """
     metadata = get_metadata()
-    if metadata['is_admin']:
-        quote = Quote.query.get(report_id)
+    quote = Quote.query.get(quote_id)
+    if quote and metadata['is_admin']:
         quote.hidden = False
         db.session.commit()
         flash("Quote Unhidden!")
         return redirect('/hidden')
-    return redirect('/')
+    elif quote:
+        abort(403)
+    abort(400)
 
 @app.route('/hidden', methods=['GET'])
 @auth.oidc_auth
@@ -364,9 +365,9 @@ def hidden():
     """
     metadata = get_metadata()
     if metadata['is_admin']:
-        quotes = Quote.query.filter( Quote.hidden ).all()
+        quotes = get_quote_query(include_hidden=True).filter( Quote.hidden ).all()
     else:
-        quotes = Quote.query.filter(
+        quotes = get_quote_query(include_hidden=True).filter(
             (Quote.speaker == metadata['uid']) | (Quote.submitter == metadata['uid'] )
         ).filter( Quote.hidden ).all()
     return render_template(
@@ -374,3 +375,12 @@ def hidden():
         quotes=quotes,
         metadata=metadata
     )
+
+@app.errorhandler(403)
+def forbidden(e):
+    return render_template('bootstrap/403.html', metadata=get_metadata()), 403
+
+@app.errorhandler(400)
+def forbidden(e):
+    return render_template('bootstrap/400.html', metadata=get_metadata()), 400
+

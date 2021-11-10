@@ -18,14 +18,14 @@ depends_on = None
 
 def upgrade():
     op.create_table('report',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('quote_id', sa.Integer(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False, autoincrement=True),
+    sa.Column('quote_id', sa.Integer(), nullable=False),
     sa.Column('reporter', sa.Text(), nullable=False),
-    sa.Column('reason', sa.Text(), nullable=False),
+    sa.Column('reason', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['quote_id'], ['quote.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.add_column('quote', sa.Column('hidden', sa.Boolean(), nullable=True))
+    op.add_column('quote', sa.Column('hidden', sa.Boolean(), nullable=False, default=False))
 
 
 def downgrade():

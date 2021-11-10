@@ -3,7 +3,7 @@ click
 csh_ldap>=2.0.2
 Flask
 Flask-Mail==0.9.1
-Flask-Migrate
+Flask-Migrate==3.1.0
 Flask-pyoidc==1.3.0
 Flask-Script
 Flask-SQLAlchemy>=2.5.0

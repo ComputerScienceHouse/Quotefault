@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column('report', sa.Column('reviewed', sa.Boolean(), nullable=False))
+    op.add_column('report', sa.Column('reviewed', sa.Boolean(), nullable=False, default=False))
 
 
 def downgrade():
