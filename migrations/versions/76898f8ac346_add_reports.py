@@ -21,7 +21,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False, autoincrement=True),
     sa.Column('quote_id', sa.Integer(), nullable=False),
     sa.Column('reporter', sa.Text(), nullable=False),
-    sa.Column('reason', sa.Text(), nullable=True),
+    sa.Column('reason', sa.Text(), nullable=False),
     sa.ForeignKeyConstraint(['quote_id'], ['quote.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

@@ -32,7 +32,7 @@
                 <div class="card-body">
                     "{{ report.quote.quote }}" <b>- {{ get_display_name(report.quote.speaker) }}</b>
                     <br>
-                    <b>Reported by: {{report.reporter}}</b>
+                    <b>Reported by: {{report.reporter}} | Reason: {{report.reason}}</b>
                 </div>
                 <div class="card-footer">
                     Submitted by <a href="https://profiles.csh.rit.edu/user/{{ report.quote.submitter }}">{{ get_display_name(report.quote.submitter) }}</a> on {{ report.quote.quote_time.strftime('%Y-%m-%d %H:%M:%S') }}

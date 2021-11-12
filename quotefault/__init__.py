@@ -8,12 +8,11 @@ import subprocess
 from datetime import datetime
 
 import requests
-from flask import Flask, render_template, request, flash, session, make_response, abort
+from flask import Flask, render_template, request, flash, session, make_response, abort, redirect
 from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
-from werkzeug.utils import redirect
 
 app = Flask(__name__)
 # look for a config file to associate with a db/port/ip/servername
@@ -266,7 +265,7 @@ def submit_report(quote_id):
     if existing_report:
         flash("You already submitted a report for this Quote!")
         return redirect('/storage')
-    new_report = Report(quote_id, metadata['uid'], None)
+    new_report = Report(quote_id, metadata['uid'], "Report Reason Not Given")
     db.session.add(new_report)
     db.session.commit()
     if app.config['MAIL_SERVER'] != '':
