@@ -26,9 +26,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 app.logger.info('SQLAlchemy pointed at ' + repr(db.engine.url))
 
-# pylint: disable=wrong-import-position
-from .models import Quote, Vote, Report
-
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
 
@@ -42,6 +39,7 @@ app.secret_key = 'submission'  # allows message flashing, var not actually used
 
 from .ldap import get_all_members, is_member_of_group
 from .mail import send_quote_notification_email, send_report_email
+from .models import Quote, Vote, Report
 
 def get_metadata():
     """
@@ -59,11 +57,10 @@ def get_metadata():
         "uid": uid,
         "version": version,
         "plug": plug,
-        "is_admin" : is_member_of_group(uid,'eboard') or is_member_of_group(uid,'rtp')
+        "is_admin" : is_member_of_group(uid, 'eboard') or is_member_of_group(uid, 'rtp')
     }
     return metadata
 
-# in the CSH serverspace and rendering the mainpage template
 @app.route('/', methods=['GET'])
 @auth.oidc_auth
 def main():
@@ -281,7 +278,7 @@ def review():
     and either hide or keep quote
     """
     metadata = get_metadata()
-    if metadata['is_admin']:  
+    if metadata['is_admin']:
         # Get the most recent 20 quotes
         reports = Report.query.filter(Report.reviewed == False).all()
 
@@ -300,22 +297,22 @@ def review_submit(report_id, result):
     """
     metadata = get_metadata()
     report = Report.query.get(report_id)
-    if report and metadata['is_admin']:
-        if result == "keep": 
-            report.reviewed = True
-            db.session.commit()
-            flash("Report Completed: Quote Kept")
-        elif result == "hide":
-            report.quote.hidden = True
-            report.reviewed = True
-            db.session.commit()
-            flash("Report Completed: Quote Hidden")
-        else:
-            abort(400)
-        return redirect('/review')
-    elif report:
+    if not metadata['is_admin']:
         abort(403)
-    abort(400)
+    if not report:
+        abort(404)
+    if result == "keep": 
+        report.reviewed = True
+        db.session.commit()
+        flash("Report Completed: Quote Kept")
+    elif result == "hide":
+        report.quote.hidden = True
+        report.reviewed = True
+        db.session.commit()
+        flash("Report Completed: Quote Hidden")
+    else:
+        abort(404)
+    return redirect('/review')
     
 
 @app.route('/hide/<quote_id>', methods=['POST'])
@@ -326,16 +323,15 @@ def hide(quote_id):
     """
     metadata = get_metadata()
     quote = Quote.query.get(quote_id)
-    if quote and ( metadata['uid'] == quote.speaker
-        or metadata['uid'] == quote.submitter
-        or metadata['is_admin'] ):
-        quote.hidden = True
-        db.session.commit()
-        flash("Quote Hidden!")
-        return redirect('/storage')
-    elif quote:
+    if not metadata['is_admin']:
         abort(403)
-    abort(400)
+    if not quote:
+        abort(404)
+    quote.hidden = True
+    db.session.commit()
+    flash("Quote Hidden!")
+    return redirect('/storage')
+
 
 @app.route('/unhide/<quote_id>', methods=['POST'])
 @auth.oidc_auth
@@ -345,14 +341,15 @@ def unhide(quote_id):
     """
     metadata = get_metadata()
     quote = Quote.query.get(quote_id)
-    if quote and metadata['is_admin']:
-        quote.hidden = False
-        db.session.commit()
-        flash("Quote Unhidden!")
-        return redirect('/hidden')
-    elif quote:
+    if not metadata['is_admin']:
         abort(403)
-    abort(400)
+    if not quote:
+        abort(404)
+    quote.hidden = False
+    db.session.commit()
+    flash("Quote Unhidden!")
+    return redirect('/hidden')
+
 
 @app.route('/hidden', methods=['GET'])
 @auth.oidc_auth
@@ -379,7 +376,6 @@ def hidden():
 def forbidden(e):
     return render_template('bootstrap/403.html', metadata=get_metadata()), 403
 
-@app.errorhandler(400)
+@app.errorhandler(404)
 def forbidden(e):
-    return render_template('bootstrap/400.html', metadata=get_metadata()), 400
-
+    return render_template('bootstrap/404.html', metadata=get_metadata()), 404
