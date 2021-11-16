@@ -279,7 +279,7 @@ def review():
     """
     metadata = get_metadata()
     if metadata['is_admin']:
-        # Get the most recent 20 quotes
+        # Get all outstanding reports
         reports = Report.query.filter(Report.reviewed == False).all()
 
         return render_template(
@@ -301,6 +301,8 @@ def review_submit(report_id, result):
         abort(403)
     if not report:
         abort(404)
+    if report.reviewed:
+        abort(404)
     if result == "keep": 
         report.reviewed = True
         db.session.commit()
@@ -311,7 +313,7 @@ def review_submit(report_id, result):
         db.session.commit()
         flash("Report Completed: Quote Hidden")
     else:
-        abort(404)
+        abort(400)
     return redirect('/review')
     
 
@@ -379,3 +381,7 @@ def forbidden(e):
 @app.errorhandler(404)
 def forbidden(e):
     return render_template('bootstrap/404.html', metadata=get_metadata()), 404
+
+@app.errorhandler(400)
+def forbidden(e):
+    return render_template('bootstrap/400.html', metadata=get_metadata()), 400
