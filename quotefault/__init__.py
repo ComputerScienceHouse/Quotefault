@@ -386,3 +386,7 @@ def forbidden(e):
 def forbidden(e):
     return render_template('bootstrap/400.html', metadata=get_metadata()), 400
 
+@app.errorhandler(409)
+def forbidden(e):
+    return render_template('bootstrap/409.html', metadata=get_metadata()), 409
+
