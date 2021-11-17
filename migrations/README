@@ -1,11 +1,12 @@
-Generic single-database configuration.
+## What are Alembic and migrations?
+Migrations give a versioned history of changes to the SQL Schema for this project.
+A `revision` or `migration` defines changes to the structure of the database (such as adding/dropping tables or columns), as well as procedures for migrating existing data to the new structure. Migrations allow for safe(ish) rollbacks, and make it easier to make incremental changes to the database.
 
-Q: What is Alembic/Migrations?
-A: Migrations give a versioned history of changes to the SQL Schema for this project. A "revision" defines changes to a table (add/drop tables or columns). This allows you to go back in time if needed, and quickly re-create the whole schema for a local development
+## Applying migrations
+Once you have your db URI in `config.py`, run `flask db upgrade` to bring the db up to the latest revision.
 
-Q: How do I update my local database to use the migrations?
-A: (1) Add your URI to config.py, depending on how you are doing it. (2) Run "flask db upgrade"
-
-Q: I made changes to the models.py file and need a new revision. How do I do that?
-A: flask db revision -m "Whatever you want to name it"
-
+## Creating new revisions
+When you change `models.py`, you'll need to make a new migration.
+Run `flask db revision -m "<descriptive title>"` to autogenerate one.
+You should go manually inspect the created revision to make sure it does what you expect.
+Once you've got your changes all set, be sure to commit the migration file in the same commit as your changes to `models.py`
