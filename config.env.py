@@ -28,3 +28,4 @@ MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", default=None)
 MAIL_SERVER = os.environ.get("MAIL_SERVER", default=None)
 MAIL_PORT = os.environ.get("MAIL_PORT", default=465)
 MAIL_USE_SSL = True
+

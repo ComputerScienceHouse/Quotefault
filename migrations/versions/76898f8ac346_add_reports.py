@@ -31,3 +31,4 @@ def upgrade():
 def downgrade():
     op.drop_column('quote', 'hidden')
     op.drop_table('report')
+

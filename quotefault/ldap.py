@@ -50,3 +50,4 @@ def is_member_of_group(uid: str, group: str) -> bool:
         if group == group_dn.split(",")[0][3:]:
             return True
     return False
+

@@ -4,4 +4,4 @@ Hello EBoard/RTP
     Quote being reported: {{quote.quote}} -{{quote.speaker}}
     Quote submitted by: {{quote.submitter}}
     Please attend to this on https://quotefault.csh.rit.edu/admin
-    
+

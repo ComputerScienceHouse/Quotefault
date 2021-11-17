@@ -8,3 +8,4 @@ A: (1) Add your URI to config.py, depending on how you are doing it. (2) Run "fl
 
 Q: I made changes to the models.py file and need a new revision. How do I do that?
 A: flask db revision -m "Whatever you want to name it"
+

@@ -54,3 +54,4 @@ def downgrade():
     op.drop_table('quote')
     op.drop_table('api_key')
     # ### end Alembic commands ###
+

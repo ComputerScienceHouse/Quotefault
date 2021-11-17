@@ -87,3 +87,4 @@ class Report(db.Model):
         self.quote_id = quote_id
         self.reporter = reporter
         self.reason = reason
+
