@@ -32,16 +32,6 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <script>
-                        switch (category) {
-                            case warning:
-                                category = warning
-                            case error:
-                                category = danger
-                            default:
-                                category = success
-                        }
-                    </script>
                     <div class="alert alert-{{ category }}" role="alert">
                         {{ message }}
                     </div>

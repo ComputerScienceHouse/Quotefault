@@ -325,7 +325,7 @@ def hide(quote_id):
     """
     metadata = get_metadata()
     quote = Quote.query.get(quote_id)
-    if not metadata['is_admin']:
+    if not (metadata['uid'] == quote.submitter or metadata['uid'] == quote.speaker or metadata['is_admin']):
         abort(403)
     if not quote:
         abort(404)

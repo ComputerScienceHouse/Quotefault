@@ -10,28 +10,18 @@
         // Get the modal
         var modal = document.getElementById(`unhide_${id}`);
         modal.style.display = "block";
-    }
-    function unhideClose(id){
-        // Get the modal
-        var modal = document.getElementById(`unhide_${id}`);
-        modal.style.display = "none";
-    }
+        }
+        function unhideClose(id){
+            // Get the modal
+            var modal = document.getElementById(`unhide_${id}`);
+            modal.style.display = "none";
+        }
     </script>
     <div class="container">
         <!-- flash relevant message when submit button is clicked -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <script>
-                        switch (category) {
-                            case warning:
-                                category = warning
-                            case error:
-                                category = danger
-                            default:
-                                category = success
-                        }
-                    </script>
                     <div class="alert alert-{{ category }}" role="alert">
                         {{ message }}
                     </div>
