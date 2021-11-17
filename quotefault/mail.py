@@ -21,8 +21,8 @@ def send_report_email(reporter, quote):
                 sender=app.config.get('MAIL_USERNAME'),
                 recipients=recipients)
     template = 'mail/report'
-    msg.body = render_template(template + '.txt', reporter = reporter, quote = quote )
-    msg.html = render_template(template + '.html', reporter = reporter, quote = quote )
+    msg.body = render_template(template + '.txt', reporter = reporter, quote = quote, server = app.config['SERVER_NAME'])
+    msg.html = render_template(template + '.html', reporter = reporter, quote = quote, server = app.config['SERVER_NAME'])
     mail_client.send(msg)
 
 def send_email(toaddr, subject, body):
