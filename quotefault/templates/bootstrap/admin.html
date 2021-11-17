@@ -1,0 +1,45 @@
+{% extends "bootstrap/base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/static/css/votes/upvote.css">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <!-- flash relevant message when submit button is clicked -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% for report in reports %}
+            <div class="card m-3">
+                <div class="card-body">
+                    "{{ report.quote.quote }}" <b>- {{ get_display_name(report.quote.speaker) }}</b>
+                    <br>
+                    <b>Reported by: {{report.reporter}} | Reason: {{report.reason}}</b>
+                </div>
+                <div class="card-footer">
+                    Submitted by <a href="https://profiles.csh.rit.edu/user/{{ report.quote.submitter }}">{{ get_display_name(report.quote.submitter) }}</a> on {{ report.quote.quote_time.strftime('%Y-%m-%d %H:%M:%S') }}
+                    <form method="POST" action="/review/{{report.id}}/hide" id="hide::{{report.id}}" method="POST">
+                        <button type="submit" class="btn btn-danger float-right">Hide</button>
+                    </form>
+                    <form method="POST" action="/review/{{report.id}}/keep" id="keep::{{report.id}}" method="POST">
+                        <button type="submit" class="btn btn-success float-right">Keep</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/load_more.js') }}"></script>
+    <script src="{{ url_for('static', filename='css/votes/upvote.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vote.js') }}"></script>
+{% endblock %}
+

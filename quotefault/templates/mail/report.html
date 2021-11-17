@@ -1,0 +1,13 @@
+{% extends "extend/email.html" %}
+
+{% block body %}
+    <div class="container main">
+        <h2>Hello EBoard/RTP,</h2>
+        <h3>There is a new report on QuoteFault</h3>
+        <p>Report submitted by: {{reporter}}</p>
+        <p>Quote being reported: {{quote.quote}} -{{quote.speaker}}</p>
+        <p>Quote submitted by: {{quote.submitter}}</p>
+        <p>Please attend to this on the <a href="https://quotefault.csh.rit.edu/admin">QuoteFault Admin Page</a>!</p>
+    </div>
+{% endblock %}
+

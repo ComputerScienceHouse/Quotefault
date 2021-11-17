@@ -1,0 +1,91 @@
+{% extends "bootstrap/base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/static/css/votes/upvote.css">
+{% endblock %}
+
+{% block body %}
+    <script type="text/javascript">
+        function unhide(id){
+        // Get the modal
+        var modal = document.getElementById(`unhide_${id}`);
+        modal.style.display = "block";
+        }
+        function unhideClose(id){
+            // Get the modal
+            var modal = document.getElementById(`unhide_${id}`);
+            modal.style.display = "none";
+        }
+    </script>
+    <div class="container">
+        <!-- flash relevant message when submit button is clicked -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% for quote, votes in quotes %}
+            {% if loop.index0 == 0 and config['PLUG'] == True and metadata.plug != 'False' %}
+                <div class="card my-3">
+                    <div class="card-body">
+                        <div class="plug-body">
+                            <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug">
+                                <img style="width: 100%" src="https://plug.csh.rit.edu/data"
+                                     alt="Advertisements by CSH: Plug">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="card m-3">
+
+                <div class="card-body">
+                    "{{ quote.quote }}" <b>- {{ get_display_name(quote.speaker) }}</b>
+                </div>
+                <div class="card-footer">
+                    Submitted by <a href="https://profiles.csh.rit.edu/user/{{ quote.submitter }}">{{ get_display_name(quote.submitter) }}</a> on {{ quote.quote_time.strftime('%Y-%m-%d %H:%M:%S') }}
+                    {% if metadata['is_admin'] %}
+                        <button type="button" class="btn btn-success btn-sm float-right" onclick="unhide({{quote.id}})" id="unhide_button_{{quote.id}}">Unhide</button>
+                        <div class="modal" id="unhide_{{quote.id}}">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Unhide Quote</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to unhide this quote?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <!-- TODO: Probably should not be using form and buttons and rather be using input. -->
+                                        <!-- <a class="btn btn-primary btn-sm" href="/report/{{quote.id}}" id="report::{{quote.id}}" type="button btn-danger">Yes</a> -->
+                                        <form method="POST" action="/unhide/{{quote.id}}" id="unhide::{{quote.id}}" method="POST">
+                                            <button type="submit" class="btn btn-success">Yes</button>
+                                        </form>
+                                        <button type="button" class="btn btn-danger" onclick="unhideClose({{quote.id}})" id="unhide_close_{{quote.id}}">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/load_more.js') }}"></script>
+    <script src="{{ url_for('static', filename='css/votes/upvote.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vote.js') }}"></script>
+{% endblock %}
+
