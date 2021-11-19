@@ -1,32 +1,11 @@
 {% extends "bootstrap/base.html" %}
+{% from 'bootstrap/macro.html' import display_quotes as display with context %}
 
 {% block styles %}
     <link rel="stylesheet" href="/static/css/votes/upvote.css">
 {% endblock %}
 
 {% block body %}
-<script type="text/javascript">
-    function report(id){
-        // Get the modal
-        var modal = document.getElementById(`report_${id}`);
-        modal.style.display = "block";
-    }
-    function reportClose(id){
-        // Get the modal
-        var modal = document.getElementById(`report_${id}`);
-        modal.style.display = "none";
-    }
-    function hide(id){
-        // Get the modal
-        var modal = document.getElementById(`hide_${id}`);
-        modal.style.display = "block";
-    }
-    function hideClose(id){
-        // Get the modal
-        var modal = document.getElementById(`hide_${id}`);
-        modal.style.display = "none";
-    }
-</script>
     <div class="container">
         <!-- flash relevant message when submit button is clicked -->
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -38,98 +17,7 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        
-        {% for quote, votes in quotes %}
-            {% if loop.index0 == 0 and config['PLUG'] == True and metadata.plug != 'False' %}
-                <div class="card my-3">
-                    <div class="card-body">
-                        <div class="plug-body">
-                            <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug">
-                                <img style="width: 100%" src="https://plug.csh.rit.edu/data"
-                                     alt="Advertisements by CSH: Plug">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-
-            <div class="card m-3">
-
-                <div class="card-body">
-                    "{{ quote.quote }}" <b>- {{ get_display_name(quote.speaker) }}</b>
-                    <div id="votes-{{ quote.id }}" class="upvote upvote-meta-stackoverflow">
-                        <a class="upvote" id="upVote-{{ quote.id }}" onClick="makeVote({{ quote.id }}, 1)">
-                        </a>
-                        <span class="count">
-                            {% if votes %}
-                                {{ votes }}
-                            {% else %}
-                                0
-                            {% endif %}
-                        </span>
-                        <a class="downvote" id="downVote-{{ quote.id }}"
-                           onClick="makeVote({{ quote.id }}, -1)">
-                        </a>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    Submitted by <a href="https://profiles.csh.rit.edu/user/{{ quote.submitter }}">{{ get_display_name(quote.submitter) }}</a> on {{ quote.quote_time.strftime('%Y-%m-%d %H:%M:%S') }}
-                    
-                    <button type="button" class="btn btn-danger btn-sm float-right" onclick="report({{quote.id}})" id="report_button_{{quote.id}}">Report</button>
-                    <div class="modal" id="report_{{quote.id}}">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Report Quote</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Are you sure you want to report this quote?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <!-- TODO: Probably should not be using form and buttons and rather be using input. -->
-                                    <!-- <a class="btn btn-primary btn-sm" href="/report/{{quote.id}}" id="report::{{quote.id}}" type="button btn-danger">Yes</a> -->
-                                    <form method="POST" action="/report/{{quote.id}}" id="report::{{quote.id}}" method="POST">
-                                        <button type="submit" class="btn btn-danger">Yes</button>
-                                    </form>
-                                    <button type="button" class="btn btn-success" onclck="reportClose({{quote.id}})" id="report_close_{{quote.id}}">No
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% if metadata['uid'] == quote.submitter or metadata['uid'] == quote.speaker or metadata['is_admin'] %}
-                        <button type="button" class="btn btn-warning btn-sm float-right" onclick="hide({{quote.id}})" id="hide_button_{{quote.id}}">Hide</button>
-                        <div class="modal" id="hide_{{quote.id}}">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Hide Quote</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                            aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Are you sure you want to hide this quote?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <!-- TODO: Probably should not be using form and buttons and rather be using input. -->
-                                        <!-- <a class="btn btn-primary btn-sm" href="/report/{{quote.id}}" id="report::{{quote.id}}" type="button btn-danger">Yes</a> -->
-                                        <form method="POST" action="/hide/{{quote.id}}" id="hide::{{quote.id}}" method="POST">
-                                            <button type="submit" class="btn btn-danger">Yes</button>
-                                        </form>
-                                        <button type="button" class="btn btn-success" onclick="hideClose({{quote.id}})" id="hide_close_{{quote.id}}">No</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                </div>
-            </div>
-        {% endfor %}
+        {{ display( quotes ) }}
         <button href="#moreQuotes" id="get_more" data-toggle="collapse" class="btn btn-default center-block">But wait, there's more!</button>
         <br>
         <div id="moreQuotes" class="collapse" aria-expanded="false">

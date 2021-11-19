@@ -1,27 +1,2 @@
-{% for quote, votes in quotes %}
-    <div class="card m-3">
-        <div class="card-body">
-            "{{ quote.quote }}" <b>- {{ get_display_name(quote.speaker) }}</b>
-            <div id="votes-{{ quote.id }}" class="upvote upvote-meta-stackoverflow">
-                <a class="upvote" id="upVote-{{ quote.id }}" onClick="makeVote({{ quote.id }}, 1)">
-                </a>
-                <span class="count">
-                    {% if votes %}
-                        {{ votes }}
-                    {% else %}
-                        0
-                    {% endif %}
-                </span>
-                <a class="downvote" id="downVote-{{ quote.id }}"
-                   onClick="makeVote({{ quote.id }}, -1)">
-                </a>
-            </div>
-        </div>
-        <div class="card-footer">
-            Submitted by <a
-                href="https://profiles.csh.rit.edu/user/{{ quote.submitter }}">{{ get_display_name(quote.submitter) }}</a>
-            on {{ quote.quote_time.strftime('%Y-%m-%d %H:%M:%S') }}
-        </div>
-    </div>
-{% endfor %}
-
+{% from 'bootstrap/macro.html' import display_quotes as display with context %}
+{{ display( quotes ) }}
