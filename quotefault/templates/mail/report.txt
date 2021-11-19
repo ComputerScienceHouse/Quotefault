@@ -3,5 +3,5 @@ Hello EBoard/RTP
     Report submitted by: {{reporter}}
     Quote being reported: {{quote.quote}} -{{quote.speaker}}
     Quote submitted by: {{quote.submitter}}
-    Please attend to this on https://quotefault.csh.rit.edu/admin
+    Please attend to this on https://{{server}}/admin
 
