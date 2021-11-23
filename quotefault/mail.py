@@ -16,7 +16,7 @@ def send_report_email(reporter, quote):
     """
     Send email to eboard/rtp for a new report
     """
-    recipients = ["<eboard@csh.rit.edu>","<rtp@csh.rit.edu>"]
+    recipients = ["<eboard@csh.rit.edu>","<active-rtp@csh.rit.edu>"]
     msg = Message(subject='New QuoteFault Report',
                 sender=app.config.get('MAIL_USERNAME'),
                 recipients=recipients)
