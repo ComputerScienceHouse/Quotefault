@@ -378,8 +378,6 @@ def hidden():
 @auth.oidc_auth
 def random_quote():
   quote = db.session.execute("SELECT * FROM quotefault.quote WHERE hidden=0 ORDER BY RAND() LIMIT 1;").all()[0]
-  #quote = get_quote_query(speaker = request.args.get('speaker'),
-  #      submitter = request.args.get('submitter')).order_by(func.rand()).limit(1).all()[0][0]
   out = f"{quote[2]} -{quote[3]} (Submitted by {quote[1]})"
   return out, 200
 
