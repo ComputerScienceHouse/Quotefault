@@ -224,6 +224,11 @@ def get(page):
     quotes = get_quote_query(speaker = request.args.get('speaker'),
         submitter = request.args.get('submitter')).offset((page-1)*20).limit(20).all()
 
+    rows = get_quote_query(speaker = request.args.get('speaker'),
+        submitter = request.args.get('submitter')).count()
+
+    rows = int(rows//20 + bool(rows%20 > 0))
+
     #tie any votes the user has made to their uid
     user_votes = Vote.query.filter(Vote.voter == metadata['uid']).all()
     return render_template(
@@ -231,7 +236,8 @@ def get(page):
         quotes=quotes,
         metadata=metadata,
         user_votes=user_votes,
-        page=page
+        page=page,
+        rows=rows
     )
 
 @app.route('/report/<quote_id>', methods=['POST'])
