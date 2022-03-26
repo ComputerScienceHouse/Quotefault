@@ -18,10 +18,9 @@
             {% endif %}
         {% endwith %}
         {{ display( quotes ) }}
-        <button href="#moreQuotes" id="get_more" data-toggle="collapse" class="btn btn-default center-block">But wait, there's more!</button>
-        <br>
-        <div id="moreQuotes" class="collapse" aria-expanded="false">
-        </div>
+        <a href="/storage/{{ page + 1 }}">
+        <button id="get_more"  class="btn btn-default center-block">But wait, there's more!</button>
+        </a>
     </div>
 {% endblock %}
 

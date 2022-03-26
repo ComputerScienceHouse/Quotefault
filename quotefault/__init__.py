@@ -192,7 +192,7 @@ def get_quote_query(speaker: str = "", submitter: str = "", include_hidden: bool
     quote_query = db.session.query(Quote, 
         func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote)
     # Put the most recent first
-    quote_query = quote_query.order_by(Quote.quote_time.desc())
+    quote_query = quote_query.order_by(Quote.id.desc())
     # Filter hidden quotes
     if not include_hidden:
         quote_query = quote_query.filter(Quote.hidden == False)
@@ -206,15 +206,23 @@ def get_quote_query(speaker: str = "", submitter: str = "", include_hidden: bool
 # display first 20 stored quotes
 @app.route('/storage', methods=['GET'])
 @auth.oidc_auth
-def get():
+def default_get():
+    return redirect("/storage/1")
+
+# display first 20 stored quotes
+@app.route('/storage/<page>', methods=['GET'])
+@auth.oidc_auth
+def get(page):
     """
     Show submitted quotes, only showing first 20 initially
     """
     metadata = get_metadata()
 
+    page = int(page)
+
     # Get the most recent 20 quotes
     quotes = get_quote_query(speaker = request.args.get('speaker'),
-        submitter = request.args.get('submitter')).limit(20).all()
+        submitter = request.args.get('submitter')).offset((page-1)*20).limit(20).all()
 
     #tie any votes the user has made to their uid
     user_votes = Vote.query.filter(Vote.voter == metadata['uid']).all()
@@ -222,32 +230,8 @@ def get():
         'bootstrap/storage.html',
         quotes=quotes,
         metadata=metadata,
-        user_votes=user_votes
-    )
-
-
-# display ALL stored quotes
-@app.route('/additional', methods=['GET'])
-@auth.oidc_auth
-def additional_quotes():
-    """
-    Show beyond the first 20 quotes
-    """
-
-    metadata = get_metadata()
-
-    # Get all the quotes
-    quotes = get_quote_query(speaker = request.args.get('speaker'),
-        submitter = request.args.get('submitter')).all()
-
-    #tie any votes the user has made to their uid
-    user_votes = db.session.query(Vote).filter(Vote.voter == metadata['uid']).all()
-
-    return render_template(
-        'bootstrap/additional_quotes.html',
-        quotes=quotes[20:],
-        metadata=metadata,
-        user_votes=user_votes
+        user_votes=user_votes,
+        page=page
     )
 
 @app.route('/report/<quote_id>', methods=['POST'])
