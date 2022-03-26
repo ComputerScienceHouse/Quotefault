@@ -28,7 +28,13 @@
                     <a class="page-link" href="/storage/{{ page - 1 }}">Previous</a>
                 {% endif %}
                 </li>
-                {% if page < 6 %}
+                {% if rows <= 12 %}
+                    {% for num in range(1, rows + 1) %}
+                        <li class="page-item">
+                            <a class="page-link" href="/storage/{{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+                {% elif page < 6 %}
                     {% for num in range(1, 12) %}
                         <li class="page-item">
                             <a class="page-link" href="/storage/{{ num }}">{{ num }}</a>
