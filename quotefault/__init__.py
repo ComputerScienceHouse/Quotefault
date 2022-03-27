@@ -12,7 +12,7 @@ from flask import Flask, render_template, request, flash, session, make_response
 from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy.sql.expression import func
 
 app = Flask(__name__)
 # look for a config file to associate with a db/port/ip/servername
@@ -186,13 +186,13 @@ def submit():
     ), 200
 
 
-def get_quote_query(speaker: str = "", submitter: str = "", include_hidden: bool = False):
+def get_quote_query(speaker: str = "", submitter: str = "", include_hidden: bool = False, order = Quote.quote_time.desc()):
     """Return a query based on the args, with vote count attached to the quotes"""
     # Get all the quotes with their votes
     quote_query = db.session.query(Quote, 
         func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote)
     # Put the most recent first
-    quote_query = quote_query.order_by(Quote.quote_time.desc())
+    quote_query = quote_query.order_by(order)
     # Filter hidden quotes
     if not include_hidden:
         quote_query = quote_query.filter(Quote.hidden == False)
@@ -377,8 +377,9 @@ def hidden():
 @app.route('/random', methods=['GET'])
 @auth.oidc_auth
 def random_quote():
-  quote = db.session.execute("SELECT * FROM quotefault.quote WHERE hidden=0 ORDER BY RAND() LIMIT 1;").all()[0]
-  out = f"{quote[2]} -{quote[3]} (Submitted by {quote[1]})"
+  quote = get_quote_query(speaker = request.args.get('speaker'), \
+            submitter = request.args.get('submitter'), order = func.random()).limit(1).all()[0][0]
+  out = f"{quote.quote} -{quote.speaker} (Submitted by {quote.submitter})"
   return out, 200
 
 @app.errorhandler(403)
