@@ -220,14 +220,17 @@ def get(page):
 
     page = int(page)
 
-    # Get the most recent 20 quotes
-    quotes = get_quote_query(speaker = request.args.get('speaker'),
-        submitter = request.args.get('submitter')).offset((page-1)*20).limit(20).all()
-
-    rows = get_quote_query(speaker = request.args.get('speaker'),
-        submitter = request.args.get('submitter')).count()
-
+    query = get_quote_query(speaker = request.args.get('speaker'),
+        submitter = request.args.get('submitter'))
+        
+    rows = query.count()
     rows = int(rows//20 + bool(rows%20 > 0))
+
+    if page > rows or page < 1:
+        return "Page Out of Bounds", 404
+
+    # Get the most recent 20 quotes
+    quotes = query.offset((page-1)*20).limit(20).all()
 
     #tie any votes the user has made to their uid
     user_votes = Vote.query.filter(Vote.voter == metadata['uid']).all()
@@ -237,7 +240,9 @@ def get(page):
         metadata=metadata,
         user_votes=user_votes,
         page=page,
-        rows=rows
+        rows=rows,
+        begin=max(1, page-6),
+        end=min(page+6, rows) + 1
     )
 
 @app.route('/report/<quote_id>', methods=['POST'])
