@@ -30,9 +30,9 @@
                 {% endif %}
                 </li>
                 {% for num in range(begin, end) %}
-                    <li class="page-item">
-                        <a class="page-link" href="/storage/{{ num }}">{{ num }}</a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link" href="/storage/{{ num }}">{{ num }}</a>
+                </li>
                 {% endfor %}
                 {% if page == rows %}
                 <li class="page-item disabled">
