@@ -18,10 +18,34 @@
             {% endif %}
         {% endwith %}
         {{ display( quotes ) }}
-        <button href="#moreQuotes" id="get_more" data-toggle="collapse" class="btn btn-default center-block">But wait, there's more!</button>
-        <br>
-        <div id="moreQuotes" class="collapse" aria-expanded="false">
-        </div>
+        <nav aria-label="page selector">
+            <ul class="pagination pagination-lg justify-content-center">
+                
+                {% if page == 1 %}
+                <li class="page-item disabled"> 
+                    <a class="page-link" href="/storage/{{ page - 1 }}" tabindex="-1">Previous</a>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="/storage/{{ page - 1 }}">Previous</a>
+                {% endif %}
+                </li>
+                {% for num in range(begin, end) %}
+                <li class="page-item">
+                    <a class="page-link" href="/storage/{{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if page == rows %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="/storage/{{ page + 1 }}" tabindex="-1">Next</a>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="/storage/{{ page + 1 }}">Next</a>
+                {% endif %}
+                </li>
+                    
+                </li>  
+            </ul>
+        </nav>
     </div>
 {% endblock %}
 
