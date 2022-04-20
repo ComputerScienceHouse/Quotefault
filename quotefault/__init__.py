@@ -6,6 +6,7 @@ Contributors: Devin Matte, Max Meinhold, Joe Abbate
 import os
 import subprocess
 from datetime import datetime
+import pytz
 
 import requests
 from flask import Flask, render_template, request, flash, session, make_response, abort, redirect
@@ -189,7 +190,7 @@ def submit():
 def get_quote_query(speaker: str = "", submitter: str = "", include_hidden: bool = False):
     """Return a query based on the args, with vote count attached to the quotes"""
     # Get all the quotes with their votes
-    quote_query = db.session.query(Quote, 
+    quote_query = db.session.query(Quote,
         func.sum(Vote.direction).label('votes')).outerjoin(Vote).group_by(Quote)
     # Put the most recent first
     quote_query = quote_query.order_by(Quote.quote_time.desc())
@@ -216,11 +217,17 @@ def get():
     quotes = get_quote_query(speaker = request.args.get('speaker'),
         submitter = request.args.get('submitter')).limit(20).all()
 
+    adjust = []
+    for obj in quotes:
+        quote = obj[0]
+        quote.quote_time = quote.quote_time.astimezone(pytz.timezone('America/New_York'))
+        adjust.append((quote,obj[1]))
+
     #tie any votes the user has made to their uid
     user_votes = Vote.query.filter(Vote.voter == metadata['uid']).all()
     return render_template(
         'bootstrap/storage.html',
-        quotes=quotes,
+        quotes=adjust,
         metadata=metadata,
         user_votes=user_votes
     )
@@ -240,12 +247,18 @@ def additional_quotes():
     quotes = get_quote_query(speaker = request.args.get('speaker'),
         submitter = request.args.get('submitter')).all()
 
+    adjust = []
+    for obj in quotes:
+        quote = obj[0]
+        quote.quote_time = quote.quote_time.astimezone(pytz.timezone('America/New_York'))
+        adjust.append((quote,obj[1]))
+
     #tie any votes the user has made to their uid
     user_votes = db.session.query(Vote).filter(Vote.voter == metadata['uid']).all()
 
     return render_template(
         'bootstrap/additional_quotes.html',
-        quotes=quotes[20:],
+        quotes=adjust[20:],
         metadata=metadata,
         user_votes=user_votes
     )
@@ -303,7 +316,7 @@ def review_submit(report_id, result):
         abort(404)
     if report.reviewed:
         abort(404)
-    if result == "keep": 
+    if result == "keep":
         report.reviewed = True
         db.session.commit()
         flash("Report Completed: Quote Kept")
@@ -315,7 +328,7 @@ def review_submit(report_id, result):
     else:
         abort(400)
     return redirect('/review')
-    
+
 
 @app.route('/hide/<quote_id>', methods=['POST'])
 @auth.oidc_auth
@@ -389,4 +402,3 @@ def forbidden(e):
 @app.errorhandler(409)
 def forbidden(e):
     return render_template('bootstrap/409.html', metadata=get_metadata()), 409
-
