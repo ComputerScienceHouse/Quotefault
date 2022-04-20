@@ -217,17 +217,14 @@ def get():
     quotes = get_quote_query(speaker = request.args.get('speaker'),
         submitter = request.args.get('submitter')).limit(20).all()
 
-    adjust = []
-    for obj in quotes:
-        quote = obj[0]
-        quote.quote_time = quote.quote_time.astimezone(pytz.timezone('America/New_York'))
-        adjust.append((quote,obj[1]))
+    for quote in quotes:
+        quote[0].quote_time=quote[0].quote_time.astimezone(pytz.timezone('America/New_York'))
 
     #tie any votes the user has made to their uid
     user_votes = Vote.query.filter(Vote.voter == metadata['uid']).all()
     return render_template(
         'bootstrap/storage.html',
-        quotes=adjust,
+        quotes=quotes,
         metadata=metadata,
         user_votes=user_votes
     )
@@ -247,18 +244,15 @@ def additional_quotes():
     quotes = get_quote_query(speaker = request.args.get('speaker'),
         submitter = request.args.get('submitter')).all()
 
-    adjust = []
-    for obj in quotes:
-        quote = obj[0]
-        quote.quote_time = quote.quote_time.astimezone(pytz.timezone('America/New_York'))
-        adjust.append((quote,obj[1]))
+    for quote in quotes:
+        quote[0].quote_time=quote[0].quote_time.astimezone(pytz.timezone('America/New_York'))
 
     #tie any votes the user has made to their uid
     user_votes = db.session.query(Vote).filter(Vote.voter == metadata['uid']).all()
 
     return render_template(
         'bootstrap/additional_quotes.html',
-        quotes=adjust[20:],
+        quotes=quotes[20:],
         metadata=metadata,
         user_votes=user_votes
     )
