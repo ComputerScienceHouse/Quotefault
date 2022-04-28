@@ -34,24 +34,28 @@ function buttonAjax(buttonElem, options, failOnly) {
     }
 }
 
+var currentPage = 1;
+
 $(function () {
-    $("#get_more").one("click", function (e) {
+    $("#get_more").click(function (e) {
         //Prepare the url with the proper query strings
         let urlParams = new URLSearchParams(window.location.search);
         let speaker = urlParams.get('speaker');
         let submitter = urlParams.get('submitter');
-        let urlStr = `/additional`;
+        let page = urlParams.get('page');
+        let urlStr = `/additional?j`;
         if(speaker){
-            urlStr+=`?speaker=${speaker}`;
+            urlStr+=`&speaker=${speaker}`;
         }
         if(submitter){
-            urlStr+=`?submitter=${submitter}`;
+            urlStr+=`&submitter=${submitter}`;
         }
+        urlStr += "&page=" + (currentPage++);
         buttonAjax($(this), {
             url: urlStr,
             method: 'GET',
             success: function (data, textStatus, jqXHR) {
-                $("#moreQuotes").html(data)
+                $("#moreQuotes").append(data)
                     .collapse("show");
             },
             error: function (error) {
