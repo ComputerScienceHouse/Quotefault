@@ -32,14 +32,15 @@
                     <input type="text" class="form-control"
                            name="quoteString"
                            placeholder="Quote">
-                    <select class="select2-select" name="nameString">
+                    <select class="select2-select" name="nameString" id="name">
+                        <option style="display:none;" disabled selected value hidden></option>
                         {% for member in all_members %}
                             <option value="{{ member.uid }}">{{ member.cn }} ({{ member.uid }})</option>
                         {% endfor %}
                     </select>
                     <br>
                     <input type="submit" class="form-control btn btn-primary"
-                           value="Submit">
+                           value="Submit" id="submit" disabled>
                 </form>
             </div>
         </div>
@@ -54,6 +55,8 @@
                 theme: "bootstrap"
             });
         });
+     $("#name").change(function(){
+         $("#submit").prop("disabled", false);
+     });
     </script>
 {% endblock %}
-
