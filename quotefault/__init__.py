@@ -12,6 +12,7 @@ import requests
 from flask import Flask, render_template, request, flash, session, make_response, abort, redirect
 from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
+from flask_pyoidc.provider_configuration import ProviderConfiguration, ClientMetadata
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 
@@ -32,9 +33,15 @@ requests.packages.urllib3.disable_warnings()
 
 # Disable SQLAlchemy modification tracking
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-auth = OIDCAuthentication(app,
-                          issuer=app.config['OIDC_ISSUER'],
-                          client_registration_info=app.config['OIDC_CLIENT_CONFIG'])
+
+_config = ProviderConfiguration(
+    app.config['OIDC_ISSUER'],
+    client_metadata = ClientMetadata(
+        app.config['OIDC_CLIENT_CONFIG']['client_id'],
+        app.config['OIDC_CLIENT_CONFIG']['client_secret']
+    )
+)
+auth = OIDCAuthentication({'default': _config}, app)
 
 app.secret_key = 'submission'  # allows message flashing, var not actually used
 
@@ -63,7 +70,7 @@ def get_metadata():
     return metadata
 
 @app.route('/', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def main():
     """
     Root Website, presents submission page
@@ -74,7 +81,7 @@ def main():
 
 
 @app.route('/settings', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def settings():
     """
     Presents settings page
@@ -84,7 +91,7 @@ def settings():
 
 
 @app.route('/vote', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def make_vote():
     """
     Called by JS to add vote to DB
@@ -110,7 +117,7 @@ def make_vote():
 
 
 @app.route('/settings', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def update_settings():
     """
     Update settings from settings page
@@ -126,7 +133,7 @@ def update_settings():
 
 # run when the form submission button is clicked
 @app.route('/submit', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def submit():
     """
     Submit quote from main page, add to DB
@@ -168,7 +175,7 @@ def submit():
         # upload the quote
         db.session.commit()
         # Send email to person quoted
-        if app.config['MAIL_SERVER'] != '':
+        if app.config['MAIL_SERVER'] != None:
             send_quote_notification_email(speaker)
         # create a message to flash for successful submission
         flash('Submission Successful!')
@@ -206,7 +213,7 @@ def get_quote_query(speaker: str = "", submitter: str = "", include_hidden: bool
 
 # display first 20 stored quotes
 @app.route('/storage', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def get():
     """
     Show submitted quotes, only showing first 20 initially
@@ -232,7 +239,7 @@ def get():
 
 # display ALL stored quotes
 @app.route('/additional', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def additional_quotes():
     """
     Show beyond the first 20 quotes
@@ -258,7 +265,7 @@ def additional_quotes():
     )
 
 @app.route('/report/<quote_id>', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def submit_report(quote_id):
     """
     Report a quote and notify EBoard/RTP
@@ -272,13 +279,13 @@ def submit_report(quote_id):
     new_report = Report(quote_id, metadata['uid'], "Report Reason Not Given")
     db.session.add(new_report)
     db.session.commit()
-    if app.config['MAIL_SERVER'] != '':
+    if app.config['MAIL_SERVER'] != None:
         send_report_email( metadata['uid'], Quote.query.get(quote_id) )
     flash("Report Successful!")
     return redirect('/storage')
 
 @app.route('/review', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def review():
     """
     Presents page for admins to review reports
@@ -297,7 +304,7 @@ def review():
     abort(403)
 
 @app.route('/review/<report_id>/<result>', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def review_submit(report_id, result):
     """
     Called when Admin decides on a quote being hidden or kept
@@ -325,7 +332,7 @@ def review_submit(report_id, result):
 
 
 @app.route('/hide/<quote_id>', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def hide(quote_id):
     """
     Hides a quote
@@ -343,7 +350,7 @@ def hide(quote_id):
 
 
 @app.route('/unhide/<quote_id>', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def unhide(quote_id):
     """
     Gives admins power to unhide a hidden quote
@@ -361,7 +368,7 @@ def unhide(quote_id):
 
 
 @app.route('/hidden', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def hidden():
     """
     Presents hidden quotes to qualified users

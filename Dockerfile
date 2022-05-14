@@ -1,4 +1,4 @@
-FROM python:3.9.8-buster
+FROM docker.io/python:3.10.4-buster
 LABEL maintainer="Joseph Abbate <josephabbateny@gmail.com>"
 
 WORKDIR /app/
