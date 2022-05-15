@@ -6,6 +6,7 @@ from datetime import datetime
 import os
 from sqlalchemy import UniqueConstraint
 from quotefault import db
+import pytz
 
 # create the quote table with all relevant columns
 class Quote(db.Model):
@@ -29,6 +30,17 @@ class Quote(db.Model):
         self.submitter = submitter
         self.quote = quote
         self.speaker = speaker
+
+    def to_dict(self):
+        return {
+            "hidden": self.hidden,
+            "id": self.id,
+            "quote": self.quote,
+            "speaker": self.speaker,
+            "submitter": self.submitter,
+            "time": self.quote_time.replace(tzinfo=pytz.timezone('UTC')).isoformat(),
+            "vote_count": len(self.votes),
+        }
 
 
 class Vote(db.Model):
