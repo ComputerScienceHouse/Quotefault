@@ -3,13 +3,17 @@ File name: __init__.py
 Author: Nicholas Mercadante
 Contributors: Devin Matte, Max Meinhold, Joe Abbate
 """
+import json
+import logging
 import os
 import subprocess
 from datetime import datetime
 import pytz
 
 import requests
-from flask import Flask, render_template, request, flash, session, make_response, abort, redirect
+from flask import Flask, render_template, request, flash, \
+    session, make_response, abort, redirect, Response
+from flask_accept import accept
 from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_pyoidc.provider_configuration import ProviderConfiguration, ClientMetadata
@@ -213,8 +217,9 @@ def get_quote_query(speaker: str = "", submitter: str = "", include_hidden: bool
 
 # display first 20 stored quotes
 @app.route('/storage', methods=['GET'])
+@accept('text/html')
 @auth.oidc_auth('default')
-def get():
+def storage():
     """
     Show submitted quotes, only showing first 20 initially
     """
@@ -236,6 +241,39 @@ def get():
         user_votes=user_votes
     )
 
+@storage.support('application/json')
+@auth.token_auth('default')
+def storage_json():
+    """
+    Grab all quotes from the database as json
+    """
+    quotes = get_quote_query(
+        speaker = request.args.get('speaker'),
+        submitter = request.args.get('submitter')
+    )
+    # JSON Generator.
+    # Needed because otherwise the client will time out waiting for us!
+    def generate_quote_json(quotes):
+        # Adapted from: https://blog.al4.co.nz/2016/01/streaming-json-with-flask/
+        quotes = quotes.__iter__()
+        prev_quote = None
+        try:
+            quote = next(quotes)[0]
+            prev_quote = quote.to_dict() # get first result
+        except StopIteration:
+            # StopIteration here means the length was zero, so yield a valid json blob and stop
+            yield '{"quotes":[]}'
+            raise StopIteration
+        # First, yield the opening json
+        yield '{"quotes":['
+        # Iterate over the quotes
+        for quote in quotes:
+            yield json.dumps(prev_quote) + ','
+            prev_quote = quote[0].to_dict()
+        # Now yield the last iteration without comma but with the closing brackets
+        yield json.dumps(prev_quote) + ']}'
+
+    return Response(generate_quote_json(quotes), content_type='application/json')
 
 # display ALL stored quotes
 @app.route('/additional', methods=['GET'])
