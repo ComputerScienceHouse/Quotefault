@@ -427,7 +427,7 @@ def hidden():
     )
 
 @app.route('/random', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 def random_quote():
   quote = get_quote_query(speaker = request.args.get('speaker'), \
             submitter = request.args.get('submitter'), order = func.random()).limit(1).all()[0][0]
