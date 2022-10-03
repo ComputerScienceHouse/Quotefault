@@ -1,47 +1,47 @@
 @media screen and (max-width: 1680px) {
-    .panel.panel-primary {
-        margin-left: 40px;
-        margin-right: 40px;
-        margin-top: 10px;
-    }
+  .panel.panel-primary {
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-top: 10px;
+  }
 }
 
 @media screen and (max-width: 1280px) {
-    .panel.panel-primary {
-        margin-left: 30px;
-        margin-right: 30px;
-        margin-top: 8px;
-    }
+  .panel.panel-primary {
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 8px;
+  }
 }
 
 @media screen and (max-width: 736px) {
-    .panel.panel-primary {
-        margin-left: 20px;
-        margin-right: 20px;
-        margin-top: 6px;
-    }
+  .panel.panel-primary {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 6px;
+  }
 }
 
 @media screen and (max-width: 480px) {
-    .panel.panel-primary {
-        margin-left: 10px;
-        margin-right: 10px;
-        margin-top: 4px;
-    }
+  .panel.panel-primary {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 4px;
+  }
 }
 
 /* The total progress gets shown by event listeners */
 #total-progress {
-    opacity: 0;
-    transition: opacity 0.3s linear;
+  opacity: 0;
+  transition: opacity 0.3s linear;
 }
 
-h5.title{
-    word-wrap: break-word;
+h5.title {
+  word-wrap: break-word;
 }
 
-div.version{
-    text-align: center;
+div.version {
+  text-align: center;
 }
 
 /* Hide the progress bar when finished */
@@ -61,20 +61,21 @@ div.version{
 #previews .file-row.dz-success .cancel {
   display: none;
 }
+
 #previews .file-row.dz-success .delete {
   display: block;
 }
 
 /* CSH Plug Styling */
 .plug-body img {
-    text-align: center;
-    margin: auto;
-    max-width: 100%;
+  text-align: center;
+  margin: auto;
+  max-width: 100%;
 }
 
 /* Alert message font color */
 .alert {
-    color: black;
+  color: black;
 }
 
 .select2-container--bootstrap .select2-dropdown {
@@ -314,8 +315,16 @@ div.version{
   width: 100%;
 }
 
-.upvote-meta-stackoverflow{
-    text-align: right;
-    float: right;
-    justify-content: right;
+.upvote-meta-stackoverflow {
+  text-align: right;
+  float: right;
+  justify-content: right;
+}
+
+select:invalid {
+  color: gray;
+}
+
+#select2-name-container[title='Name (username)'] {
+  color: gray;
 }
