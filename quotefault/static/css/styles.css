@@ -325,6 +325,6 @@ select:invalid {
   color: gray;
 }
 
-#select2-name-container[title='Name (username)'] {
+#select2-name-container[title='CSH Username'] {
   color: gray;
 }
