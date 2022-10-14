@@ -8,7 +8,7 @@ def send_quote_ping(user):
         f"https://pings.csh.rit.edu/service/route/{pings_quote_route}/ping",
         json = {
             "username": user,
-            "body": "You have been quoted!!!"
+            "body": "You have been quoted!!! Check Quotefault to see what you were caught saying."
         },
         headers = {
             "Authorization": f"Bearer {pings_token}"
