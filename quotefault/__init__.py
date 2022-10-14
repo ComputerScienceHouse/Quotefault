@@ -52,6 +52,7 @@ app.secret_key = 'submission'  # allows message flashing, var not actually used
 from .ldap import get_all_members, is_member_of_group
 from .mail import send_quote_notification_email, send_report_email
 from .models import Quote, Vote, Report
+from .pings import send_quote_ping
 
 def get_metadata():
     """
@@ -179,8 +180,10 @@ def submit():
         # upload the quote
         db.session.commit()
         # Send email to person quoted
-        if app.config['MAIL_SERVER'] != None:
-            send_quote_notification_email(speaker)
+        # if app.config['MAIL_SERVER'] != None:
+            # send_quote_notification_email(speaker)
+        # Send Ping
+        send_quote_ping(speaker)
         # create a message to flash for successful submission
         flash('Submission Successful!')
         # return something to complete submission
