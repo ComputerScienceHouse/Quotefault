@@ -319,3 +319,11 @@ div.version{
     float: right;
     justify-content: right;
 }
+
+select:invalid {
+  color: gray;
+}
+
+#select2-name-container[title='CSH Username'] {
+  color: gray;
+}

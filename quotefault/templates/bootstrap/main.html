@@ -33,7 +33,7 @@
                            name="quoteString"
                            placeholder="Quote">
                     <select class="select2-select" name="nameString" id="name">
-                        <option style="display:none;" disabled selected value hidden></option>
+                        <option style="display:none;" disabled selected value hidden>CSH Username</option>
                         {% for member in all_members %}
                             <option value="{{ member.uid }}">{{ member.cn }} ({{ member.uid }})</option>
                         {% endfor %}
