@@ -15,6 +15,6 @@ MarkupSafe==2.1.1
 PyMySQL==1.0.2
 python-editor==1.0.4
 SQLAlchemy==1.4.36
-Werkzeug==2.1.2
+Werkzeug==2.2.3
 pytz==2022.1
 flask_accept==0.0.6
