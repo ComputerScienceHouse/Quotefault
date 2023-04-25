@@ -24,7 +24,7 @@
     {% for quote, votes in quotes %}
         <div class="card m-3">
             <div class="card-body">
-                "{{ quote.quote }}" <b>- {{ get_display_name(quote.speaker) }}</b>
+                "{{ quote.quote }}" <b>- <a href="/storage?speaker={{ quote.speaker }}">{{ get_display_name(quote.speaker) }}</a></b>
                 <div id="votes-{{ quote.id }}" class="upvote upvote-meta-stackoverflow">
                     <a class="upvote" id="upVote-{{ quote.id }}" onClick="makeVote({{ quote.id }}, 1)">
                     </a>
