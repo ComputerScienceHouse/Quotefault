@@ -18,10 +18,10 @@
             {% endif %}
         {% endwith %}
         {{ display( quotes ) }}
-        <button href="#moreQuotes" id="get_more" data-toggle="collapse" class="btn btn-default center-block">But wait, there's more!</button>
-        <br>
-        <div id="moreQuotes" class="collapse" aria-expanded="false">
+        <div id="moreQuotes" aria-expanded="false">
         </div>
+        <br>
+        <button href="#moreQuotes" id="get_more" class="btn btn-default center-block">But wait, there's more!</button>
     </div>
 {% endblock %}
 
@@ -30,4 +30,3 @@
     <script src="{{ url_for('static', filename='css/votes/upvote.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vote.js') }}"></script>
 {% endblock %}
-

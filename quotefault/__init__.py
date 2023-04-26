@@ -287,7 +287,7 @@ def additional_quotes():
 
     # Get all the quotes
     quotes = get_quote_query(speaker = request.args.get('speaker'),
-        submitter = request.args.get('submitter')).all()
+        submitter = request.args.get('submitter')).paginate(int(request.args.get("page", default="1")), 20).items
 
     for quote in quotes:
         quote[0].quote_time=quote[0].quote_time.astimezone(pytz.timezone('America/New_York'))
@@ -297,7 +297,7 @@ def additional_quotes():
 
     return render_template(
         'bootstrap/additional_quotes.html',
-        quotes=quotes[20:],
+        quotes=quotes,
         metadata=metadata,
         user_votes=user_votes
     )
